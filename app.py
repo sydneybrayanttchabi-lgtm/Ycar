@@ -1,147 +1,200 @@
-import streamlit as st
-import requests
+ import streamlit as st
+ import pandas as pd
+ import streamlit.components.v1 as components
 
-# Configuration de la page
+# ==========================================
+# 1. CONFIGURATION DE LA PAGE
+# ==========================================
 st.set_page_config(
-    page_title="YKR.com",
-    page_icon="🚗",
+    page_title="Comparateur & Auto Import 3D",
+    page_icon="🚘",
     layout="wide"
 )
 
-# --- 1. FONCTION DE CONVERSION EN TEMPS RÉEL (API GRATUITE) ---
-@st.cache_data(ttl=3600)  # Cache de 1 heure pour garder le site fluide et rapide
-def obtenir_taux_devises(devise_base="EUR"):
-    """
-    Interroge une API gratuite pour obtenir les taux de change actualisés.
-    En cas de problème réseau, bascule automatiquement sur des taux par défaut.
-    """
-    try:
-        url = f"https://open.er-api.com/v6/latest/{devise_base}"
-        res = requests.get(url, timeout=5)
-        if res.status_code == 200:
-            data = res.json()
-            if data.get("result") == "success":
-                return data.get("rates", {}), True
-    except Exception:
-        pass
-    
-    # Taux de secours (hors-ligne)
-    taux_secours = {
-        "EUR": 1.0,
-        "XOF": 655.957,  # Franc CFA BCEAO
-        "USD": 1.09,
-        "GBP": 0.85,
-        "CAD": 1.48,
-        "JPY": 165.0
-    }
-    return taux_secours, False
-
-# Chargement des taux
-taux_dict, api_succes = obtenir_taux_devises("EUR")
-
-# --- TITRE & EN-TÊTE ---
-st.title("Ycar")
-st.write("Comparez des véhicules, simulez les frais de douane et convertissez les prix en temps réel.")
-
-# Témoin d'état du réseau
-if api_succes:
-    st.caption("🟢 **Taux de change :** En direct du marché financier (Mis à jour)")
-else:
-    st.caption("🟠 **Taux de change :** Mode secours (Hors-ligne)")
-
-# --- ONGLETS PRINCIPAUX ---
-tab1, tab2 = st.tabs(["📊 Comparateur & Simulateur Import", "🔀 Convertisseur de Devises Universel"])
-
-# --- BASE DE DONNÉES TEMPORAIRE ---
-vehicules = {
-    "Toyota RAV4 Hybride 2022": {
-        "prix_export_eur": 25000,
-        "moteur": "Hybride 2.5L",
-        "avantages": "Fiabilité extrême, faible conso, revente facile.",
-        "inconvenients": "Prix d'achat élevé, assurance plus chère.",
-        "lien_affiliation": "https://vendeur-officiel.com/rav4",
-        "image_url": "https://images.unsplash.com/photo-1621007947382-df31b1e4e6b6?auto=format&fit=crop&w=800"
-    },
-    "Hyundai Tucson 2021": {
-        "prix_export_eur": 21000,
-        "moteur": "Diesel 1.6 CRDi",
-        "avantages": "Design moderne, beaucoup d'options, pièces accessibles.",
-        "inconvenients": "Consommation urbaine, décote plus rapide.",
-        "lien_affiliation": "https://vendeur-officiel.com/tucson",
-        "image_url": "https://images.unsplash.com/photo-1633511090164-b4bf3ccaa01b?auto=format&fit=crop&w=800"
-    }
+# ==========================================
+# 2. BASE DE DONNÉES SIMULÉE (Pandas)
+# ==========================================
+# Dans le futur, tu pourras remplacer ceci par : df = pd.read_csv('voitures.csv')
+data = {
+    "Marque_Modele": [
+        "Toyota Prado TXL", "Range Rover Sport", "Mercedes Classe G", 
+        "Hyundai Tucson", "Lexus RX 350", "Porsche Cayenne"
+    ],
+    "Categorie": ["4x4", "Luxe", "Luxe", "SUV", "SUV", "Luxe"],
+    "Prix_USD": [45000, 85000, 130000, 28000, 50000, 75000],
+    "Avantages": [
+        "Fiabilité extrême, Pièces disponibles partout",
+        "Confort premium, Finitions luxueuses, Statut",
+        "Design iconique, Capacités tout-terrain, Prestige",
+        "Excellent rapport qualité/prix, Faible consommation",
+        "Fiabilité japonaise, Confort silencieux, Revente facile",
+        "Performances sportives, Tenue de route, Matériaux"
+    ],
+    "Inconvenients": [
+        "Consommation élevée, Design vieillissant",
+        "Coût d'entretien très cher, Décote rapide",
+        "Prix d'achat exorbitant, Consommation énorme",
+        "Moteur un peu faible chargé, Espace coffre moyen",
+        "Design infodivertissement daté, Prix d'assurance",
+        "Coût des options, Entretien hors de prix"
+    ],
+    "Vendeur_Officiel": [
+        "CFAO Motors", "Tractafric Motors", "Silver Star Auto", 
+        "CFAO Motors", "CFAO Motors", "Porsche Center"
+    ],
+    "Lien_Vendeur": [
+        "https://www.cfaogroup.com", "https://www.tractafricmotors.com", 
+        "https://www.mercedes-benz.com", "https://www.cfaogroup.com", 
+        "https://www.lexus.com", "https://www.porsche.com"
+    ],
+    # URLs de modèles 3D (.glb). Ce sont des exemples, tu devras mettre tes propres liens
+    "Modele_3D_URL": [
+        "https://modelviewer.dev/shared-assets/models/Astronaut.glb", # Remplace par une URL de Prado 3D
+        "https://modelviewer.dev/shared-assets/models/glTF-Sample-Models/2.0/DamagedHelmet/glTF-Binary/DamagedHelmet.glb", # Remplace par Range Rover
+        "https://modelviewer.dev/shared-assets/models/RobotExpressive.glb", # Remplace par Classe G
+        "https://modelviewer.dev/shared-assets/models/Astronaut.glb",
+        "https://modelviewer.dev/shared-assets/models/Astronaut.glb",
+        "https://modelviewer.dev/shared-assets/models/Astronaut.glb"
+    ]
 }
 
-# === ONGLET 1 : COMPARATEUR & SIMULATEUR ===
-with tab1:
-    modele_choisi = st.selectbox("Choisissez un véhicule à analyser :", list(vehicules.keys()))
-    voiture = vehicules[modele_choisi]
+df = pd.DataFrame(data)
 
-    col1, col2 = st.columns(2)
+# ==========================================
+# 3. EN-TÊTE ET FILTRES (UI)
+# ==========================================
+st.title("🚘 Plateforme Importation & Comparateur 3D")
+st.markdown("Explorez les véhicules sous tous les angles, analysez les fiches techniques et calculez vos frais d'importation via SYDONIA World / GUCE.")
+st.markdown("---")
 
-    with col1:
-        st.subheader(f"Fiche Technique : {modele_choisi}")
-        st.image(voiture['image_url'], use_container_width=True)
-        st.write(f"**Motorisation :** {voiture['moteur']}")
-        st.success(f"**Avantages :** {voiture['avantages']}")
-        st.warning(f"**Inconvénients :** {voiture['inconvenients']}")
-        
-        # Conversion du prix d'origine en FCFA (XOF)
-        prix_eur = voiture['prix_export_eur']
-        taux_xof = taux_dict.get("XOF", 655.957)
-        prix_xof = prix_eur * taux_xof
-        
-        st.info(f"**Prix Export :** {prix_eur:,.0f} € (~ **{prix_xof:,.0f} FCFA**)")
-        st.link_button("Voir chez le vendeur certifié", voiture['lien_affiliation'])
+st.sidebar.header("🔍 Filtres de recherche")
+categorie_filtre = st.sidebar.multiselect(
+    "Filtrer par catégorie :", 
+    options=df["Categorie"].unique(), 
+    default=df["Categorie"].unique()
+)
 
-    with col2:
-        st.subheader("🚢 Simulateur de Frais de Douane")
-        frais_fret = st.number_input("Frais de transport maritime (€)", min_value=500, max_value=3000, value=1200, step=100)
-        taux_douane = st.slider("Taux de dédouanement estimé (%)", min_value=10, max_value=80, value=40)
-        
-        valeur_caf = voiture['prix_export_eur'] + frais_fret
-        montant_douane = valeur_caf * (taux_douane / 100)
-        prix_total_eur = valeur_caf + montant_douane
-        prix_total_xof = prix_total_eur * taux_xof
-        
-        st.divider()
-        st.metric(label="Valeur CAF (Prix + Fret)", value=f"{valeur_caf:,.0f} €")
-        st.metric(label="Taxes douanières estimées", value=f"{montant_douane:,.0f} €")
-        
-        col_m1, col_m2 = st.columns(2)
-        with col_m1:
-            st.metric(label="💰 Total Estimé (Euros)", value=f"{prix_total_eur:,.0f} €")
-        with col_m2:
-            st.metric(label="🌍 Total Estimé (Franc CFA)", value=f"{prix_total_xof:,.0f} FCFA")
+# Filtrer la base de données selon les choix
+df_filtre = df[df["Categorie"].isin(categorie_filtre)]
 
-# === ONGLET 2 : CONVERTISSEUR UNIVERSEL ===
-with tab2:
-    st.subheader("🔀 Convertisseur de Devises en Temps Réel")
-    st.write("Convertissez n'importe quelle monnaie mondiale pour vos opérations d'importation.")
+vehicule_choisi = st.sidebar.selectbox(
+    "Sélectionnez le véhicule à inspecter :", 
+    options=df_filtre["Marque_Modele"].tolist()
+)
+
+# Récupérer les infos du véhicule sélectionné
+voiture_data = df_filtre[df_filtre["Marque_Modele"] == vehicule_choisi].iloc[0]
+
+# ==========================================
+# 4. VISUALISATION 3D (Style Need For Speed)
+# ==========================================
+st.header(f"Vue 360° : {voiture_data['Marque_Modele']} ({voiture_data['Categorie']})")
+
+# Code HTML/JS pour intégrer Google Model-Viewer
+# Cela permet de tourner, zoomer et interagir avec la voiture
+model_viewer_html = f"""
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.1.1/model-viewer.min.js"></script>
+    <style>
+        model-viewer {{
+            width: 100%;
+            height: 500px;
+            background-color: #f4f4f4;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }}
+    </style>
+    <model-viewer 
+        src="{voiture_data['Modele_3D_URL']}" 
+        alt="Modèle 3D de {voiture_data['Marque_Modele']}" 
+        auto-rotate 
+        camera-controls 
+        shadow-intensity="1"
+        exposure="1.2">
+    </model-viewer>
+"""
+# Injection du code HTML dans Streamlit
+components.html(model_viewer_html, height=520)
+st.caption("🖱️ *Astuce : Utilisez votre souris ou votre doigt pour faire tourner le véhicule et zoomer sur les détails.*")
+
+# ==========================================
+# 5. FICHE DÉTAILLÉE : AVANTAGES / INCONVÉNIENTS
+# ==========================================
+st.markdown("---")
+st.header("📋 Fiche Technique & Analyse")
+
+col_avantages, col_inconvenients = st.columns(2)
+
+with col_avantages:
+    st.success("### ✅ Points Forts")
+    # Séparer les avantages par des virgules pour créer une liste à puces
+    avantages_liste = voiture_data['Avantages'].split(',')
+    for av in avantages_liste:
+        st.write(f"- {av.strip()}")
+
+with col_inconvenients:
+    st.warning("### ❌ Points Faibles")
+    # Séparer les inconvénients
+    inconvenients_liste = voiture_data['Inconvenients'].split(',')
+    for inc in inconvenients_liste:
+        st.write(f"- {inc.strip()}")
+
+# ==========================================
+# 6. CALCULATEUR D'IMPORTATION (GUCE & SYDONIA)
+# ==========================================
+st.markdown("---")
+st.header("🛃 Estimateur de Frais de Douane & Importation")
+
+col_calc1, col_calc2 = st.columns([1, 2])
+
+with col_calc1:
+    st.subheader("Paramètres financiers")
+    taux_usd_xof = st.number_input("Taux de change (USD vers XOF)", value=605.0, step=5.0)
+    annee_fab = st.slider("Année de fabrication (Impacte la vétusté)", 2010, 2024, 2020)
     
-    col_a, col_b, col_c = st.columns(3)
+    prix_vehicule_xof = voiture_data['Prix_USD'] * taux_usd_xof
+    st.metric(label="Prix d'achat estimé (Hors Taxes)", value=f"{prix_vehicule_xof:,.0f} XOF")
+
+with col_calc2:
+    st.subheader("Détails des taxes (Estimation)")
     
-    devises_disponibles = sorted(list(taux_dict.keys()))
+    # Logique d'estimation des douanes
+    fret_maritime = 800000  # Estimation forfaitaire du transport
+    valeur_en_douane = prix_vehicule_xof + fret_maritime
     
-    with col_a:
-        montant_saisi = st.number_input("Montant à convertir :", min_value=1.0, value=1000.0, step=50.0)
+    # Calcul des taux standards (Exemple simplifié)
+    droits_douane = valeur_en_douane * 0.20  # 20% DD
+    tva = (valeur_en_douane + droits_douane) * 0.18  # 18% TVA
+    frais_guce = 30000  # Frais de guichet unique
+    taxe_vetuste = 0
     
-    with col_b:
-        idx_eur = devises_disponibles.index("EUR") if "EUR" in devises_disponibles else 0
-        devise_depart = st.selectbox("Monnaie de départ :", devises_disponibles, index=idx_eur)
+    if annee_fab < 2015:
+        taxe_vetuste = 250000  # Pénalité vieux véhicules
+        st.error(f"⚠️ Pénalité de vétusté appliquée : {taxe_vetuste:,.0f} XOF")
         
-    with col_c:
-        idx_xof = devises_disponibles.index("XOF") if "XOF" in devises_disponibles else 0
-        devise_arrivee = st.selectbox("Monnaie de destination :", devises_disponibles, index=idx_xof)
+    total_taxes = droits_douane + tva + frais_guce + taxe_vetuste
+    prix_final_cle_en_main = prix_vehicule_xof + total_taxes + fret_maritime
     
-    # Calcul dynamique de la conversion
-    taux_dep = taux_dict.get(devise_depart, 1.0)
-    taux_arr = taux_dict.get(devise_arrivee, 1.0)
-    
-    montant_en_eur = montant_saisi / taux_dep
-    resultat = montant_en_eur * taux_arr
-    taux_direct = taux_arr / taux_dep
-    
-    st.divider()
-    st.success(f"### 💵 Résultat : {montant_saisi:,.2f} {devise_depart} = **{resultat:,.2f} {devise_arrivee}**")
-    st.caption(f"Taux appliqué : 1 {devise_depart} = {taux_direct:,.4f} {devise_arrivee}")
+    # Affichage du bordereau
+    st.text(f"Valeur FOB (Véhicule)      : {prix_vehicule_xof:,.0f} XOF")
+    st.text(f"Fret Maritime estimé       : {fret_maritime:,.0f} XOF")
+    st.text(f"Valeur en Douane (CAF)     : {valeur_en_douane:,.0f} XOF")
+    st.markdown("---")
+    st.text(f"+ Droits de Douane (20%)   : {droits_douane:,.0f} XOF")
+    st.text(f"+ TVA (18%)                : {tva:,.0f} XOF")
+    st.text(f"+ Frais GUCE               : {frais_guce:,.0f} XOF")
+    st.markdown("---")
+    st.success(f"💰 PRIX FINAL CLÉ EN MAIN : {prix_final_cle_en_main:,.0f} XOF")
+
+# ==========================================
+# 7. RÉSEAU OFFICIEL / AFFILIATION
+# ==========================================
+st.markdown("---")
+st.header("🤝 Acheter via un Réseau Officiel")
+st.info(f"Ce véhicule est distribué officiellement par **{voiture_data['Vendeur_Officiel']}**.")
+st.link_button(f"🌐 Visiter le site de {voiture_data['Vendeur_Officiel']} pour un devis officiel", voiture_data['Lien_Vendeur'])
+
+st.markdown("""
+<div style="text-align: center; margin-top: 50px; color: gray;">
+    <small>Application développée avec Python, Streamlit et la technologie Model-Viewer.</small>
+</div>
+""", unsafe_allow_html=True)
