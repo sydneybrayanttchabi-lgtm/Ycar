@@ -1,6 +1,6 @@
 import streamlit as st
- import pandas as pd
- import streamlit.components.v1 as components
+import pandas as pd
+import streamlit.components.v1 as components
 
 # ==========================================
 # 1. CONFIGURATION DE LA PAGE
