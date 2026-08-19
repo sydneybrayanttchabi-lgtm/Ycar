@@ -3,19 +3,28 @@ import pandas as pd
 import streamlit.components.v1 as components
 
 # ==========================================
-# 1. CONFIGURATION ET STYLE CSS
+# 1. CONFIGURATION ET STYLE CSS 
 # ==========================================
 st.set_page_config(page_title="Comparateur & Auto Import 3D", layout="wide", page_icon="🚘")
 
-# Ajout d'un peu de CSS pour styliser les éléments et rendre l'interface plus premium
 st.markdown("""
     <style>
     .metric-card {
-        background-color: #f8f9fa;
+        background-color: #262730;
         border-radius: 10px;
         padding: 15px;
-        box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
-        border-left: 4px solid #ff4b4b;
+        box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
+        border-left: 5px solid #ff4b4b;
+    }
+    .metric-card b {
+        color: #b0b0b0 !important;
+        font-size: 0.95rem;
+    }
+    .metric-card h2 {
+        color: #ffffff !important;
+        margin-top: 5px;
+        margin-bottom: 0px;
+        font-weight: 600;
     }
     .customs-receipt {
         background-color: #1e1e1e;
@@ -72,11 +81,11 @@ st.markdown("Plateforme d'inspection 3D et d'estimation d'importation douanière
 # Affichage des métriques clés en haut de page
 col_m1, col_m2, col_m3 = st.columns(3)
 with col_m1:
-    st.markdown(f"<div class='metric-card'><b>Prix d'achat (FOB)</b><br><h2>${voiture_data['Prix_USD']:,.0f}</h2></div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='metric-card'><b>Prix d'achat (FOB)</b><h2>${voiture_data['Prix_USD']:,.0f}</h2></div>", unsafe_allow_html=True)
 with col_m2:
-    st.markdown(f"<div class='metric-card'><b>Catégorie</b><br><h2>{voiture_data['Categorie']}</h2></div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='metric-card'><b>Catégorie</b><h2>{voiture_data['Categorie']}</h2></div>", unsafe_allow_html=True)
 with col_m3:
-    st.markdown(f"<div class='metric-card'><b>Vendeur Officiel</b><br><h2>{voiture_data['Vendeur_Officiel']}</h2></div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='metric-card'><b>Vendeur Officiel</b><h2>{voiture_data['Vendeur_Officiel']}</h2></div>", unsafe_allow_html=True)
 
 st.write("") # Espace
 
