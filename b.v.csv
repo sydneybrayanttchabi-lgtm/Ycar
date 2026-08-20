@@ -1,6 +1,6 @@
 Marque_Modele,Categorie,Prix_USD,Avantages,Inconvenients,Vendeur_Officiel,Lien_Vendeur,Modele_3D_URL
 Toyota Prado TXL,4x4,45000,"Fiabilité extrême, Pièces disponibles partout","Consommation élevée, Design vieillissant",CFAO Motors, https://www.cfaogroup.com,https://modelviewer.dev/shared-assets/models/ToyCar.glb
 Haval H6,SUV,25000,"Design luxueux, Écran panoramique, Caméra 360 de série, Prix compétitif","Décote rapide à la revente, Pièces de rechange parfois sur commande",,,
-Jetour Dashing,SUV,22000,"Design agressif, Rapport qualité/prix, Écran tactile géant",,,,
-BYD Song Plus,SUV / Hybride,28000,,,,,
-Mercedes GLE 450,SUV Luxe,75000,,,,,
+Jetour Dashing,SUV,22000,"Design agressif, Rapport qualité/prix, Écran tactile géant","Marque récente, Décote à la revente",,,
+BYD Song Plus,SUV / Hybride,28000,"Consommation dérisoire, Moteur hybride, Écran rotatif",Entretien spécialisé nécessaire,,,
+Mercedes GLE 450,SUV Luxe,75000,"Prestige absolu, Confort royal, Valeur de revente élevée","Taxes douanières très élevées, Entretien cher",,,
