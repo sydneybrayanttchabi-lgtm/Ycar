@@ -44,9 +44,9 @@ st.markdown("""
 @st.cache_data
 def load_data():
     try:
-        return pd.read_csv("base_voitures.csv")
+        return pd.read_csv("b.v.csv")
     except Exception as e:
-        st.error("⚠️ Fichier 'base_voitures.csv' introuvable sur GitHub. Assure-toi qu'il est bien à la racine de ton dépôpt.")
+        st.error("⚠️ Fichier 'b.v.csv' introuvable sur GitHub. Assure-toi qu'il est bien à la racine de ton dépôpt.")
         st.stop()
 
 df = load_data()
