@@ -82,9 +82,9 @@ const MetricCard: React.FC<{
   value: string;
   accentColor?: string;
 }> = ({ label, value, accentColor = '#ff4b4b' }) => (
-  <div 
+  <div
     className="p-4 rounded-lg border-l-4 backdrop-blur-sm"
-    style={{ 
+    style={{
       backgroundColor: 'rgba(26, 26, 36, 0.8)',
       borderColor: accentColor,
       borderLeftWidth: '4px'
@@ -117,9 +117,9 @@ const CustomsReceipt: React.FC<{ calculation: CustomsCalculation }> = ({ calcula
   ];
 
   return (
-    <div 
+    <div
       className="p-6 rounded-lg font-mono text-sm"
-      style={{ 
+      style={{
         backgroundColor: '#000000',
         border: '1px solid #00ff00',
         boxShadow: '0 0 20px rgba(0, 255, 0, 0.3)'
@@ -130,11 +130,11 @@ const CustomsReceipt: React.FC<{ calculation: CustomsCalculation }> = ({ calcula
         <p className="text-green-400 text-sm font-bold">DOUANE - SYDONIA / GUCE</p>
         <p className="text-green-600 text-xs">SIMULATEUR DE CALCUL</p>
       </div>
-      
+
       <div className="space-y-1">
         {receiptItems.map((item, index) => (
-          <div 
-            key={index} 
+          <div
+            key={index}
             className={`flex justify-between ${item.isSeparator ? 'text-green-700' : 'text-green-400'}`}
             style={item.isBold ? { fontWeight: 'bold' } : {}}
           >
@@ -376,9 +376,9 @@ export default function App() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#0e1117' }}>
       {/* En-tête */}
-      <header 
+      <header
         className="p-6 border-b"
-        style={{ 
+        style={{
           backgroundColor: '#1a1a24',
           borderColor: '#ff4b4b'
         }}
@@ -395,9 +395,9 @@ export default function App() {
 
       <div className="flex">
         {/* Barre latérale - Filtres */}
-        <aside 
+        <aside
           className="w-72 p-6 border-r flex-shrink-0"
-          style={{ 
+          style={{
             backgroundColor: '#1a1a24',
             borderColor: '#2a2a3a'
           }}
@@ -411,7 +411,7 @@ export default function App() {
             <p className="text-gray-400 text-xs uppercase tracking-wider mb-3">Catégories</p>
             <div className="space-y-2">
               {CATEGORIES.map(category => (
-                <label 
+                <label
                   key={category}
                   className="flex items-center cursor-pointer group"
                 >
@@ -431,8 +431,11 @@ export default function App() {
 
           {/* Sélecteur de véhicule */}
           <div>
-            <p className="text-gray-400 text-xs uppercase tracking-wider mb-3">Véhicule</p>
+            <label htmlFor="vehicle-select" className="block text-gray-400 text-xs uppercase tracking-wider mb-3">
+              Véhicule
+            </label>
             <select
+              id="vehicle-select"
               value={selectedCar?.Marque_Modele || ''}
               onChange={(e) => {
                 const car = filteredCars.find(c => c.Marque_Modele === e.target.value);
@@ -478,12 +481,16 @@ export default function App() {
 
               {/* Onglets */}
               <div className="mb-6">
-                <div className="flex border-b" style={{ borderColor: '#2a2a3a' }}>
+                <div className="flex border-b" style={{ borderColor: '#2a2a3a' }} role="tablist" aria-label="Sections de navigation">
                   <button
+                    id="tab-3d"
+                    role="tab"
+                    aria-selected={activeTab === '3d'}
+                    aria-controls="panel-3d"
                     onClick={() => setActiveTab('3d')}
-                    className={`px-6 py-3 font-medium transition-colors ${
-                      activeTab === '3d' 
-                        ? 'text-white border-b-2' 
+                    className={`px-6 py-3 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 ${
+                      activeTab === '3d'
+                        ? 'text-white border-b-2'
                         : 'text-gray-400 hover:text-white'
                     }`}
                     style={{ borderColor: activeTab === '3d' ? '#ff4b4b' : 'transparent' }}
@@ -491,10 +498,14 @@ export default function App() {
                     🏎️ Vue 360° & Fiche Technique
                   </button>
                   <button
+                    id="tab-customs"
+                    role="tab"
+                    aria-selected={activeTab === 'customs'}
+                    aria-controls="panel-customs"
                     onClick={() => setActiveTab('customs')}
-                    className={`px-6 py-3 font-medium transition-colors ${
-                      activeTab === 'customs' 
-                        ? 'text-white border-b-2' 
+                    className={`px-6 py-3 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 ${
+                      activeTab === 'customs'
+                        ? 'text-white border-b-2'
                         : 'text-gray-400 hover:text-white'
                     }`}
                     style={{ borderColor: activeTab === 'customs' ? '#ff4b4b' : 'transparent' }}
@@ -506,9 +517,9 @@ export default function App() {
 
               {/* Contenu des onglets */}
               {activeTab === '3d' && (
-                <div className="grid grid-cols-2 gap-6">
+                <div id="panel-3d" role="tabpanel" aria-labelledby="tab-3d" className="grid grid-cols-2 gap-6">
                   {/* Visualisation 3D */}
-                  <div 
+                  <div
                     className="rounded-lg overflow-hidden"
                     style={{ backgroundColor: '#1a1a24' }}
                   >
@@ -526,12 +537,12 @@ export default function App() {
                   </div>
 
                   {/* Fiche technique */}
-                  <div 
+                  <div
                     className="rounded-lg p-6"
                     style={{ backgroundColor: '#1a1a24' }}
                   >
                     <h3 className="text-white font-semibold mb-4">📋 Fiche Technique</h3>
-                    
+
                     <div className="mb-6">
                       <h4 className="text-green-400 text-sm font-medium mb-2 flex items-center">
                         <span className="mr-2">✓</span> Points Forts
@@ -565,7 +576,7 @@ export default function App() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="block w-full py-3 px-4 rounded-lg text-center font-medium transition-all hover:opacity-90"
-                      style={{ 
+                      style={{
                         backgroundColor: '#ff4b4b',
                         color: 'white'
                       }}
@@ -577,9 +588,9 @@ export default function App() {
               )}
 
               {activeTab === 'customs' && (
-                <div className="grid grid-cols-2 gap-6">
+                <div id="panel-customs" role="tabpanel" aria-labelledby="tab-customs" className="grid grid-cols-2 gap-6">
                   {/* Paramètres du simulateur */}
-                  <div 
+                  <div
                     className="rounded-lg p-6"
                     style={{ backgroundColor: '#1a1a24' }}
                   >
@@ -587,10 +598,11 @@ export default function App() {
 
                     {/* Taux de change */}
                     <div className="mb-6">
-                      <label className="block text-gray-400 text-sm mb-2">
+                      <label htmlFor="exchange-rate-input" className="block text-gray-400 text-sm mb-2">
                         Taux de change (USD → FCFA)
                       </label>
                       <input
+                        id="exchange-rate-input"
                         type="number"
                         value={exchangeRate}
                         onChange={(e) => setExchangeRate(parseFloat(e.target.value) || DEFAULT_EXCHANGE_RATE)}
@@ -604,14 +616,15 @@ export default function App() {
 
                     {/* Fret maritime */}
                     <div className="mb-6">
-                      <label className="block text-gray-400 text-sm mb-2">
+                      <label htmlFor="freight-usd-input" className="block text-gray-400 text-sm mb-2">
                         Fret maritime: {formatUSD(freightUSD)}
                       </label>
                       <input
+                        id="freight-usd-input"
                         type="range"
                         value={freightUSD}
                         onChange={(e) => setFreightUSD(parseFloat(e.target.value))}
-                        className="w-full h-2 rounded-lg appearance-none cursor-pointer"
+                        className="w-full h-2 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-red-500"
                         style={{ backgroundColor: '#2a2a3a' }}
                         min="500"
                         max="3000"
@@ -625,10 +638,11 @@ export default function App() {
 
                     {/* Année du véhicule */}
                     <div className="mb-6">
-                      <label className="block text-gray-400 text-sm mb-2">
+                      <label htmlFor="vehicle-year-select" className="block text-gray-400 text-sm mb-2">
                         Année du véhicule
                       </label>
                       <select
+                        id="vehicle-year-select"
                         value={vehicleYear}
                         onChange={(e) => setVehicleYear(parseInt(e.target.value))}
                         className="w-full p-3 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
@@ -646,7 +660,7 @@ export default function App() {
                     </div>
 
                     {/* Résumé rapide */}
-                    <div 
+                    <div
                       className="p-4 rounded-lg"
                       style={{ backgroundColor: '#0e1117' }}
                     >
