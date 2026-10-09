@@ -75,16 +75,17 @@ const formatUSD = (value: number): string => {
 };
 
 /**
- * Composant de carte métrica stylisée
+ * Composant de carte métrique stylisée memoïsé.
+ * Empêche les re-rendus inutiles lors des modifications de simulation douanière.
  */
 const MetricCard: React.FC<{
   label: string;
   value: string;
   accentColor?: string;
-}> = ({ label, value, accentColor = '#ff4b4b' }) => (
-  <div 
+}> = React.memo(({ label, value, accentColor = '#ff4b4b' }) => (
+  <div
     className="p-4 rounded-lg border-l-4 backdrop-blur-sm"
-    style={{ 
+    style={{
       backgroundColor: 'rgba(26, 26, 36, 0.8)',
       borderColor: accentColor,
       borderLeftWidth: '4px'
@@ -93,12 +94,12 @@ const MetricCard: React.FC<{
     <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">{label}</p>
     <p className="text-white font-bold text-lg">{value}</p>
   </div>
-);
+));
 
 /**
  * Composant de reçu douanier style terminal
  */
-const CustomsReceipt: React.FC<{ calculation: CustomsCalculation }> = ({ calculation }) => {
+const CustomsReceipt: React.FC<{ calculation: CustomsCalculation }> = React.memo(({ calculation }) => {
   const receiptItems = [
     { label: 'Prix FOB (FCFA)', value: calculation.prixFOB_FCFA },
     { label: 'Fret Maritime (FCFA)', value: calculation.fret_FCFA },
@@ -117,9 +118,9 @@ const CustomsReceipt: React.FC<{ calculation: CustomsCalculation }> = ({ calcula
   ];
 
   return (
-    <div 
+    <div
       className="p-6 rounded-lg font-mono text-sm"
-      style={{ 
+      style={{
         backgroundColor: '#000000',
         border: '1px solid #00ff00',
         boxShadow: '0 0 20px rgba(0, 255, 0, 0.3)'
@@ -130,11 +131,11 @@ const CustomsReceipt: React.FC<{ calculation: CustomsCalculation }> = ({ calcula
         <p className="text-green-400 text-sm font-bold">DOUANE - SYDONIA / GUCE</p>
         <p className="text-green-600 text-xs">SIMULATEUR DE CALCUL</p>
       </div>
-      
+
       <div className="space-y-1">
         {receiptItems.map((item, index) => (
-          <div 
-            key={index} 
+          <div
+            key={index}
             className={`flex justify-between ${item.isSeparator ? 'text-green-700' : 'text-green-400'}`}
             style={item.isBold ? { fontWeight: 'bold' } : {}}
           >
@@ -159,7 +160,7 @@ const CustomsReceipt: React.FC<{ calculation: CustomsCalculation }> = ({ calcula
       </div>
     </div>
   );
-};
+});
 
 /**
  * Composant ModelViewer encapsulant l'élément custom
@@ -169,7 +170,7 @@ const ModelViewerComponent: React.FC<{
   alt: string;
   className?: string;
   style?: React.CSSProperties;
-}> = ({ src, alt, className, style }) => {
+}> = React.memo(({ src, alt, className, style }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -193,7 +194,7 @@ const ModelViewerComponent: React.FC<{
   }, [src, alt, className]);
 
   return <div ref={containerRef} className="w-full h-full" style={style} />;
-};
+});
 
 // ============================================================================
 // COMPOSANT PRINCIPAL
@@ -376,9 +377,9 @@ export default function App() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#0e1117' }}>
       {/* En-tête */}
-      <header 
+      <header
         className="p-6 border-b"
-        style={{ 
+        style={{
           backgroundColor: '#1a1a24',
           borderColor: '#ff4b4b'
         }}
@@ -395,9 +396,9 @@ export default function App() {
 
       <div className="flex">
         {/* Barre latérale - Filtres */}
-        <aside 
+        <aside
           className="w-72 p-6 border-r flex-shrink-0"
-          style={{ 
+          style={{
             backgroundColor: '#1a1a24',
             borderColor: '#2a2a3a'
           }}
@@ -411,7 +412,7 @@ export default function App() {
             <p className="text-gray-400 text-xs uppercase tracking-wider mb-3">Catégories</p>
             <div className="space-y-2">
               {CATEGORIES.map(category => (
-                <label 
+                <label
                   key={category}
                   className="flex items-center cursor-pointer group"
                 >
@@ -482,8 +483,8 @@ export default function App() {
                   <button
                     onClick={() => setActiveTab('3d')}
                     className={`px-6 py-3 font-medium transition-colors ${
-                      activeTab === '3d' 
-                        ? 'text-white border-b-2' 
+                      activeTab === '3d'
+                        ? 'text-white border-b-2'
                         : 'text-gray-400 hover:text-white'
                     }`}
                     style={{ borderColor: activeTab === '3d' ? '#ff4b4b' : 'transparent' }}
@@ -493,8 +494,8 @@ export default function App() {
                   <button
                     onClick={() => setActiveTab('customs')}
                     className={`px-6 py-3 font-medium transition-colors ${
-                      activeTab === 'customs' 
-                        ? 'text-white border-b-2' 
+                      activeTab === 'customs'
+                        ? 'text-white border-b-2'
                         : 'text-gray-400 hover:text-white'
                     }`}
                     style={{ borderColor: activeTab === 'customs' ? '#ff4b4b' : 'transparent' }}
@@ -508,7 +509,7 @@ export default function App() {
               {activeTab === '3d' && (
                 <div className="grid grid-cols-2 gap-6">
                   {/* Visualisation 3D */}
-                  <div 
+                  <div
                     className="rounded-lg overflow-hidden"
                     style={{ backgroundColor: '#1a1a24' }}
                   >
@@ -526,12 +527,12 @@ export default function App() {
                   </div>
 
                   {/* Fiche technique */}
-                  <div 
+                  <div
                     className="rounded-lg p-6"
                     style={{ backgroundColor: '#1a1a24' }}
                   >
                     <h3 className="text-white font-semibold mb-4">📋 Fiche Technique</h3>
-                    
+
                     <div className="mb-6">
                       <h4 className="text-green-400 text-sm font-medium mb-2 flex items-center">
                         <span className="mr-2">✓</span> Points Forts
@@ -565,7 +566,7 @@ export default function App() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="block w-full py-3 px-4 rounded-lg text-center font-medium transition-all hover:opacity-90"
-                      style={{ 
+                      style={{
                         backgroundColor: '#ff4b4b',
                         color: 'white'
                       }}
@@ -579,7 +580,7 @@ export default function App() {
               {activeTab === 'customs' && (
                 <div className="grid grid-cols-2 gap-6">
                   {/* Paramètres du simulateur */}
-                  <div 
+                  <div
                     className="rounded-lg p-6"
                     style={{ backgroundColor: '#1a1a24' }}
                   >
@@ -646,7 +647,7 @@ export default function App() {
                     </div>
 
                     {/* Résumé rapide */}
-                    <div 
+                    <div
                       className="p-4 rounded-lg"
                       style={{ backgroundColor: '#0e1117' }}
                     >
