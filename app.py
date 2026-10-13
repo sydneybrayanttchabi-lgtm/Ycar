@@ -174,21 +174,26 @@ const ModelViewerComponent: React.FC<{
 
   useEffect(() => {
     if (containerRef.current) {
-      containerRef.current.innerHTML = `
-        <model-viewer
-          src="${src}"
-          alt="${alt}"
-          auto-rotate
-          camera-controls
-          zoom-progress
-          shadow-intensity="1"
-          environment-image="neutral"
-          exposure="1"
-          interaction-prompt="none"
-          class="${className || ''}"
-          style="--poster-color: #1a1a24; width: 100%; height: 100%;"
-        ></model-viewer>
-      `;
+      // Prevent XSS by constructing the DOM element directly instead of innerHTML string interpolation
+      containerRef.current.textContent = '';
+      const modelViewer = document.createElement('model-viewer');
+      modelViewer.setAttribute('src', src);
+      modelViewer.setAttribute('alt', alt);
+      modelViewer.setAttribute('auto-rotate', '');
+      modelViewer.setAttribute('camera-controls', '');
+      modelViewer.setAttribute('zoom-progress', '');
+      modelViewer.setAttribute('shadow-intensity', '1');
+      modelViewer.setAttribute('environment-image', 'neutral');
+      modelViewer.setAttribute('exposure', '1');
+      modelViewer.setAttribute('interaction-prompt', 'none');
+      if (className) {
+        modelViewer.className = className;
+      }
+      modelViewer.setAttribute(
+        'style',
+        '--poster-color: #1a1a24; width: 100%; height: 100%;'
+      );
+      containerRef.current.appendChild(modelViewer);
     }
   }, [src, alt, className]);
 
