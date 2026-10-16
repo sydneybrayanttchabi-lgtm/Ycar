@@ -1,0 +1,3 @@
+## 2026-10-16 - Tab Navigation and Form Label Accessibility
+**Learning:** Custom UI tabs and range/select form controls lack implicit screen reader roles and label linkages unless explicitly declared (`role="tablist"`, `role="tab"`, `role="tabpanel"`, `aria-selected`, `aria-controls`, `htmlFor`/`id`). Additionally, focus indicators using Tailwind's `focus-visible:ring-2` provide essential visual cues for keyboard navigation in dark mode UI.
+**Action:** Always link form labels to form controls explicitly using `htmlFor` and `id`, implement proper ARIA roles for custom tabbed interfaces, and ensure `focus-visible` ring outlines are present on all interactive tab elements.
