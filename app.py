@@ -77,11 +77,12 @@ const formatUSD = (value: number): string => {
 /**
  * Composant de carte métrica stylisée
  */
+// Optimization: Wrapped with React.memo to prevent unnecessary re-renders when parent state updates.
 const MetricCard: React.FC<{
   label: string;
   value: string;
   accentColor?: string;
-}> = ({ label, value, accentColor = '#ff4b4b' }) => (
+}> = React.memo(({ label, value, accentColor = '#ff4b4b' }) => (
   <div 
     className="p-4 rounded-lg border-l-4 backdrop-blur-sm"
     style={{ 
@@ -93,12 +94,13 @@ const MetricCard: React.FC<{
     <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">{label}</p>
     <p className="text-white font-bold text-lg">{value}</p>
   </div>
-);
+));
 
 /**
  * Composant de reçu douanier style terminal
  */
-const CustomsReceipt: React.FC<{ calculation: CustomsCalculation }> = ({ calculation }) => {
+// Optimization: Wrapped with React.memo to prevent re-rendering when unrelated state changes.
+const CustomsReceipt: React.FC<{ calculation: CustomsCalculation }> = React.memo(({ calculation }) => {
   const receiptItems = [
     { label: 'Prix FOB (FCFA)', value: calculation.prixFOB_FCFA },
     { label: 'Fret Maritime (FCFA)', value: calculation.fret_FCFA },
@@ -159,17 +161,18 @@ const CustomsReceipt: React.FC<{ calculation: CustomsCalculation }> = ({ calcula
       </div>
     </div>
   );
-};
+});
 
 /**
  * Composant ModelViewer encapsulant l'élément custom
  */
+// Optimization: Wrapped with React.memo to prevent re-rendering and ref execution on unrelated parent state changes.
 const ModelViewerComponent: React.FC<{
   src: string;
   alt: string;
   className?: string;
   style?: React.CSSProperties;
-}> = ({ src, alt, className, style }) => {
+}> = React.memo(({ src, alt, className, style }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -193,7 +196,7 @@ const ModelViewerComponent: React.FC<{
   }, [src, alt, className]);
 
   return <div ref={containerRef} className="w-full h-full" style={style} />;
-};
+});
 
 // ============================================================================
 // COMPOSANT PRINCIPAL
