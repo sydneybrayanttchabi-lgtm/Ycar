@@ -431,8 +431,11 @@ export default function App() {
 
           {/* Sélecteur de véhicule */}
           <div>
-            <p className="text-gray-400 text-xs uppercase tracking-wider mb-3">Véhicule</p>
+            <label htmlFor="car-select" className="block text-gray-400 text-xs uppercase tracking-wider mb-3">
+              Véhicule
+            </label>
             <select
+              id="car-select"
               value={selectedCar?.Marque_Modele || ''}
               onChange={(e) => {
                 const car = filteredCars.find(c => c.Marque_Modele === e.target.value);
@@ -478,10 +481,19 @@ export default function App() {
 
               {/* Onglets */}
               <div className="mb-6">
-                <div className="flex border-b" style={{ borderColor: '#2a2a3a' }}>
+                <div
+                  className="flex border-b"
+                  style={{ borderColor: '#2a2a3a' }}
+                  role="tablist"
+                  aria-label="Onglets d'information du véhicule"
+                >
                   <button
+                    id="tab-3d"
+                    role="tab"
+                    aria-selected={activeTab === '3d'}
+                    aria-controls="panel-3d"
                     onClick={() => setActiveTab('3d')}
-                    className={`px-6 py-3 font-medium transition-colors ${
+                    className={`px-6 py-3 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 ${
                       activeTab === '3d' 
                         ? 'text-white border-b-2' 
                         : 'text-gray-400 hover:text-white'
@@ -491,8 +503,12 @@ export default function App() {
                     🏎️ Vue 360° & Fiche Technique
                   </button>
                   <button
+                    id="tab-customs"
+                    role="tab"
+                    aria-selected={activeTab === 'customs'}
+                    aria-controls="panel-customs"
                     onClick={() => setActiveTab('customs')}
-                    className={`px-6 py-3 font-medium transition-colors ${
+                    className={`px-6 py-3 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 ${
                       activeTab === 'customs' 
                         ? 'text-white border-b-2' 
                         : 'text-gray-400 hover:text-white'
@@ -506,7 +522,7 @@ export default function App() {
 
               {/* Contenu des onglets */}
               {activeTab === '3d' && (
-                <div className="grid grid-cols-2 gap-6">
+                <div id="panel-3d" role="tabpanel" aria-labelledby="tab-3d" className="grid grid-cols-2 gap-6">
                   {/* Visualisation 3D */}
                   <div 
                     className="rounded-lg overflow-hidden"
@@ -577,7 +593,7 @@ export default function App() {
               )}
 
               {activeTab === 'customs' && (
-                <div className="grid grid-cols-2 gap-6">
+                <div id="panel-customs" role="tabpanel" aria-labelledby="tab-customs" className="grid grid-cols-2 gap-6">
                   {/* Paramètres du simulateur */}
                   <div 
                     className="rounded-lg p-6"
@@ -587,10 +603,11 @@ export default function App() {
 
                     {/* Taux de change */}
                     <div className="mb-6">
-                      <label className="block text-gray-400 text-sm mb-2">
+                      <label htmlFor="exchange-rate" className="block text-gray-400 text-sm mb-2">
                         Taux de change (USD → FCFA)
                       </label>
                       <input
+                        id="exchange-rate"
                         type="number"
                         value={exchangeRate}
                         onChange={(e) => setExchangeRate(parseFloat(e.target.value) || DEFAULT_EXCHANGE_RATE)}
@@ -604,10 +621,11 @@ export default function App() {
 
                     {/* Fret maritime */}
                     <div className="mb-6">
-                      <label className="block text-gray-400 text-sm mb-2">
+                      <label htmlFor="freight-usd" className="block text-gray-400 text-sm mb-2">
                         Fret maritime: {formatUSD(freightUSD)}
                       </label>
                       <input
+                        id="freight-usd"
                         type="range"
                         value={freightUSD}
                         onChange={(e) => setFreightUSD(parseFloat(e.target.value))}
@@ -625,10 +643,11 @@ export default function App() {
 
                     {/* Année du véhicule */}
                     <div className="mb-6">
-                      <label className="block text-gray-400 text-sm mb-2">
+                      <label htmlFor="vehicle-year" className="block text-gray-400 text-sm mb-2">
                         Année du véhicule
                       </label>
                       <select
+                        id="vehicle-year"
                         value={vehicleYear}
                         onChange={(e) => setVehicleYear(parseInt(e.target.value))}
                         className="w-full p-3 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
