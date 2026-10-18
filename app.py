@@ -60,18 +60,22 @@ const FALLBACK_3D_MODEL = 'https://modelviewer.dev/shared-assets/models/ToyCar.g
 // COMPOSANTS UTILITAIRES
 // ============================================================================
 
+// Formatters réutilisables (évite la réinstanciation coûteuse de Intl.NumberFormat à chaque appel)
+const fcfaFormatter = new Intl.NumberFormat('fr-FR');
+const usdFormatter = new Intl.NumberFormat('en-US');
+
 /**
  * Formattage des nombres en format monétaire FCFA
  */
 const formatFCFA = (value: number): string => {
-  return new Intl.NumberFormat('fr-FR').format(Math.round(value)) + ' FCFA';
+  return fcfaFormatter.format(Math.round(value)) + ' FCFA';
 };
 
 /**
  * Formattage des nombres en format monétaire USD
  */
 const formatUSD = (value: number): string => {
-  return '$' + new Intl.NumberFormat('en-US').format(Math.round(value));
+  return '$' + usdFormatter.format(Math.round(value));
 };
 
 /**
@@ -81,7 +85,7 @@ const MetricCard: React.FC<{
   label: string;
   value: string;
   accentColor?: string;
-}> = ({ label, value, accentColor = '#ff4b4b' }) => (
+}> = React.memo(({ label, value, accentColor = '#ff4b4b' }) => (
   <div 
     className="p-4 rounded-lg border-l-4 backdrop-blur-sm"
     style={{ 
@@ -93,12 +97,12 @@ const MetricCard: React.FC<{
     <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">{label}</p>
     <p className="text-white font-bold text-lg">{value}</p>
   </div>
-);
+));
 
 /**
  * Composant de reçu douanier style terminal
  */
-const CustomsReceipt: React.FC<{ calculation: CustomsCalculation }> = ({ calculation }) => {
+const CustomsReceipt: React.FC<{ calculation: CustomsCalculation }> = React.memo(({ calculation }) => {
   const receiptItems = [
     { label: 'Prix FOB (FCFA)', value: calculation.prixFOB_FCFA },
     { label: 'Fret Maritime (FCFA)', value: calculation.fret_FCFA },
@@ -159,7 +163,7 @@ const CustomsReceipt: React.FC<{ calculation: CustomsCalculation }> = ({ calcula
       </div>
     </div>
   );
-};
+});
 
 /**
  * Composant ModelViewer encapsulant l'élément custom
@@ -169,7 +173,7 @@ const ModelViewerComponent: React.FC<{
   alt: string;
   className?: string;
   style?: React.CSSProperties;
-}> = ({ src, alt, className, style }) => {
+}> = React.memo(({ src, alt, className, style }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -193,7 +197,14 @@ const ModelViewerComponent: React.FC<{
   }, [src, alt, className]);
 
   return <div ref={containerRef} className="w-full h-full" style={style} />;
-};
+});
+
+const get3DModelUrl = (car: CarData): string => {
+    if (!car.Modele_3D_URL || car.Modele_3D_URL.trim() === '' || car.Modele_3D_URL === 'NaN') {
+      return FALLBACK_3D_MODEL;
+    }
+    return car.Modele_3D_URL;
+  };
 
 // ============================================================================
 // COMPOSANT PRINCIPAL
@@ -340,12 +351,7 @@ export default function App() {
     );
   };
 
-  const get3DModelUrl = (car: CarData): string => {
-    if (!car.Modele_3D_URL || car.Modele_3D_URL.trim() === '' || car.Modele_3D_URL === 'NaN') {
-      return FALLBACK_3D_MODEL;
-    }
-    return car.Modele_3D_URL;
-  };
+
 
   // ============================================================================
   // RENDU
