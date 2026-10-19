@@ -431,8 +431,8 @@ export default function App() {
 
           {/* Sélecteur de véhicule */}
           <div>
-            <p className="text-gray-400 text-xs uppercase tracking-wider mb-3">Véhicule</p>
-            <select
+            <label htmlFor="vehicle-select" className="block text-gray-400 text-xs uppercase tracking-wider mb-3">Véhicule</label>
+            <select id="vehicle-select"
               value={selectedCar?.Marque_Modele || ''}
               onChange={(e) => {
                 const car = filteredCars.find(c => c.Marque_Modele === e.target.value);
@@ -478,8 +478,8 @@ export default function App() {
 
               {/* Onglets */}
               <div className="mb-6">
-                <div className="flex border-b" style={{ borderColor: '#2a2a3a' }}>
-                  <button
+                <div role="tablist" aria-label="Navigation des options du véhicule" className="flex border-b" style={{ borderColor: '#2a2a3a' }}>
+                  <button role="tab" id="tab-3d" aria-selected={activeTab === '3d'} aria-controls="panel-3d"
                     onClick={() => setActiveTab('3d')}
                     className={`px-6 py-3 font-medium transition-colors ${
                       activeTab === '3d' 
@@ -490,7 +490,7 @@ export default function App() {
                   >
                     🏎️ Vue 360° & Fiche Technique
                   </button>
-                  <button
+                  <button role="tab" id="tab-customs" aria-selected={activeTab === 'customs'} aria-controls="panel-customs"
                     onClick={() => setActiveTab('customs')}
                     className={`px-6 py-3 font-medium transition-colors ${
                       activeTab === 'customs' 
@@ -506,7 +506,7 @@ export default function App() {
 
               {/* Contenu des onglets */}
               {activeTab === '3d' && (
-                <div className="grid grid-cols-2 gap-6">
+                <div role="tabpanel" id="panel-3d" aria-labelledby="tab-3d" className="grid grid-cols-2 gap-6">
                   {/* Visualisation 3D */}
                   <div 
                     className="rounded-lg overflow-hidden"
@@ -564,6 +564,7 @@ export default function App() {
                       href={selectedCar.Lien_Vendeur}
                       target="_blank"
                       rel="noopener noreferrer"
+                      aria-label="Visiter la concession officielle (ouvre dans un nouvel onglet)"
                       className="block w-full py-3 px-4 rounded-lg text-center font-medium transition-all hover:opacity-90"
                       style={{ 
                         backgroundColor: '#ff4b4b',
@@ -577,7 +578,7 @@ export default function App() {
               )}
 
               {activeTab === 'customs' && (
-                <div className="grid grid-cols-2 gap-6">
+                <div role="tabpanel" id="panel-customs" aria-labelledby="tab-customs" className="grid grid-cols-2 gap-6">
                   {/* Paramètres du simulateur */}
                   <div 
                     className="rounded-lg p-6"
@@ -587,10 +588,10 @@ export default function App() {
 
                     {/* Taux de change */}
                     <div className="mb-6">
-                      <label className="block text-gray-400 text-sm mb-2">
+                      <label htmlFor="exchange-rate-input" className="block text-gray-400 text-sm mb-2">
                         Taux de change (USD → FCFA)
                       </label>
-                      <input
+                      <input id="exchange-rate-input"
                         type="number"
                         value={exchangeRate}
                         onChange={(e) => setExchangeRate(parseFloat(e.target.value) || DEFAULT_EXCHANGE_RATE)}
@@ -604,10 +605,10 @@ export default function App() {
 
                     {/* Fret maritime */}
                     <div className="mb-6">
-                      <label className="block text-gray-400 text-sm mb-2">
+                      <label htmlFor="freight-usd-input" className="block text-gray-400 text-sm mb-2">
                         Fret maritime: {formatUSD(freightUSD)}
                       </label>
-                      <input
+                      <input id="freight-usd-input" aria-valuetext={formatUSD(freightUSD)}
                         type="range"
                         value={freightUSD}
                         onChange={(e) => setFreightUSD(parseFloat(e.target.value))}
@@ -625,10 +626,10 @@ export default function App() {
 
                     {/* Année du véhicule */}
                     <div className="mb-6">
-                      <label className="block text-gray-400 text-sm mb-2">
+                      <label htmlFor="vehicle-year-select" className="block text-gray-400 text-sm mb-2">
                         Année du véhicule
                       </label>
-                      <select
+                      <select id="vehicle-year-select"
                         value={vehicleYear}
                         onChange={(e) => setVehicleYear(parseInt(e.target.value))}
                         className="w-full p-3 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
