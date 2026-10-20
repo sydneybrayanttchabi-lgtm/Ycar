@@ -1,0 +1,3 @@
+## 2026-03-30 - WAI-ARIA Tab Navigation & Form Label Association in Single-File React Components
+**Learning:** React components rendered in single-file setups (`app.py`) benefit greatly from explicit form label binding (`htmlFor` -> `id`) and complete WAI-ARIA tab semantics (`role="tablist"`, `role="tab"`, `role="tabpanel"`, `aria-selected`, `aria-controls`), which drastically improves screen reader compatibility without visual design churn.
+**Action:** Always link select dropdowns with `<label htmlFor="...">` and supply proper tab roles + `focus-visible` styling when implementing custom tab interfaces.
