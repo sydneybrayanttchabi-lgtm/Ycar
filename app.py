@@ -61,6 +61,24 @@ const FALLBACK_3D_MODEL = 'https://modelviewer.dev/shared-assets/models/ToyCar.g
 // ============================================================================
 
 /**
+ * Securisation et validation des URLs externes (protection contre DOM XSS / URIs javascript:)
+ */
+const sanitizeUrl = (url: string | undefined | null, fallback: string = '#'): string => {
+  if (!url) return fallback;
+  const trimmed = url.trim();
+  if (!trimmed) return fallback;
+  try {
+    const parsed = new URL(trimmed, 'https://dummy.invalid');
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+      return trimmed;
+    }
+  } catch {
+    // Si l'URL relative ou malformee echoue a parser sans base
+  }
+  return fallback;
+};
+
+/**
  * Formattage des nombres en format monétaire FCFA
  */
 const formatFCFA = (value: number): string => {
@@ -174,21 +192,20 @@ const ModelViewerComponent: React.FC<{
 
   useEffect(() => {
     if (containerRef.current) {
-      containerRef.current.innerHTML = `
-        <model-viewer
-          src="${src}"
-          alt="${alt}"
-          auto-rotate
-          camera-controls
-          zoom-progress
-          shadow-intensity="1"
-          environment-image="neutral"
-          exposure="1"
-          interaction-prompt="none"
-          class="${className || ''}"
-          style="--poster-color: #1a1a24; width: 100%; height: 100%;"
-        ></model-viewer>
-      `;
+      containerRef.current.innerHTML = '';
+      const viewer = document.createElement('model-viewer');
+      viewer.setAttribute('src', src);
+      viewer.setAttribute('alt', alt);
+      viewer.setAttribute('auto-rotate', '');
+      viewer.setAttribute('camera-controls', '');
+      viewer.setAttribute('zoom-progress', '');
+      viewer.setAttribute('shadow-intensity', '1');
+      viewer.setAttribute('environment-image', 'neutral');
+      viewer.setAttribute('exposure', '1');
+      viewer.setAttribute('interaction-prompt', 'none');
+      if (className) viewer.className = className;
+      viewer.setAttribute('style', '--poster-color: #1a1a24; width: 100%; height: 100%;');
+      containerRef.current.appendChild(viewer);
     }
   }, [src, alt, className]);
 
@@ -344,7 +361,7 @@ export default function App() {
     if (!car.Modele_3D_URL || car.Modele_3D_URL.trim() === '' || car.Modele_3D_URL === 'NaN') {
       return FALLBACK_3D_MODEL;
     }
-    return car.Modele_3D_URL;
+    return sanitizeUrl(car.Modele_3D_URL, FALLBACK_3D_MODEL);
   };
 
   // ============================================================================
@@ -561,7 +578,7 @@ export default function App() {
                     </div>
 
                     <a
-                      href={selectedCar.Lien_Vendeur}
+                      href={sanitizeUrl(selectedCar.Lien_Vendeur, '#')}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="block w-full py-3 px-4 rounded-lg text-center font-medium transition-all hover:opacity-90"
