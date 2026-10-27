@@ -56,6 +56,9 @@ const CUSTOMS_RATES = {
 
 const FALLBACK_3D_MODEL = 'https://modelviewer.dev/shared-assets/models/ToyCar.glb';
 
+// Pre-computed static list of available years to avoid re-creating array on every render cycle
+const YEAR_OPTIONS = Array.from({ length: MAX_YEAR - MIN_YEAR + 1 }, (_, i) => MAX_YEAR - i);
+
 // ============================================================================
 // COMPOSANTS UTILITAIRES
 // ============================================================================
@@ -77,11 +80,14 @@ const formatUSD = (value: number): string => {
 /**
  * Composant de carte métrica stylisée
  */
+/**
+ * Memoized with React.memo to prevent unnecessary re-renders when parent state updates
+ */
 const MetricCard: React.FC<{
   label: string;
   value: string;
   accentColor?: string;
-}> = ({ label, value, accentColor = '#ff4b4b' }) => (
+}> = React.memo(({ label, value, accentColor = '#ff4b4b' }) => (
   <div 
     className="p-4 rounded-lg border-l-4 backdrop-blur-sm"
     style={{ 
@@ -93,12 +99,15 @@ const MetricCard: React.FC<{
     <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">{label}</p>
     <p className="text-white font-bold text-lg">{value}</p>
   </div>
-);
+));
 
 /**
  * Composant de reçu douanier style terminal
  */
-const CustomsReceipt: React.FC<{ calculation: CustomsCalculation }> = ({ calculation }) => {
+/**
+ * Memoized with React.memo so receipt DOM only updates when calculation props actually change
+ */
+const CustomsReceipt: React.FC<{ calculation: CustomsCalculation }> = React.memo(({ calculation }) => {
   const receiptItems = [
     { label: 'Prix FOB (FCFA)', value: calculation.prixFOB_FCFA },
     { label: 'Fret Maritime (FCFA)', value: calculation.fret_FCFA },
@@ -159,17 +168,20 @@ const CustomsReceipt: React.FC<{ calculation: CustomsCalculation }> = ({ calcula
       </div>
     </div>
   );
-};
+});
 
 /**
  * Composant ModelViewer encapsulant l'élément custom
+ */
+/**
+ * Memoized with React.memo to prevent unnecessary DOM innerHTML re-assignments when parent re-renders
  */
 const ModelViewerComponent: React.FC<{
   src: string;
   alt: string;
   className?: string;
   style?: React.CSSProperties;
-}> = ({ src, alt, className, style }) => {
+}> = React.memo(({ src, alt, className, style }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -193,7 +205,7 @@ const ModelViewerComponent: React.FC<{
   }, [src, alt, className]);
 
   return <div ref={containerRef} className="w-full h-full" style={style} />;
-};
+});
 
 // ============================================================================
 // COMPOSANT PRINCIPAL
@@ -634,7 +646,7 @@ export default function App() {
                         className="w-full p-3 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
                         style={{ backgroundColor: '#0e1117', border: '1px solid #2a2a3a' }}
                       >
-                        {Array.from({ length: MAX_YEAR - MIN_YEAR + 1 }, (_, i) => MAX_YEAR - i).map(year => (
+                        {YEAR_OPTIONS.map(year => (
                           <option key={year} value={year}>{year}</option>
                         ))}
                       </select>
