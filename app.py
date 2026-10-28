@@ -163,6 +163,12 @@ const CustomsReceipt: React.FC<{ calculation: CustomsCalculation }> = ({ calcula
 
 /**
  * Composant ModelViewer encapsulant l'élément custom
+ *
+ * Performance Optimization:
+ * Direct rendering of <model-viewer> via React.createElement avoids using `innerHTML`
+ * inside `useEffect`. `innerHTML` recreation tears down the underlying WebGL context,
+ * forces DOM re-parsing, and causes unnecessary memory allocations and GPU re-initializations
+ * whenever props (like 3D model URL or alt text) change.
  */
 const ModelViewerComponent: React.FC<{
   src: string;
@@ -170,29 +176,23 @@ const ModelViewerComponent: React.FC<{
   className?: string;
   style?: React.CSSProperties;
 }> = ({ src, alt, className, style }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.innerHTML = `
-        <model-viewer
-          src="${src}"
-          alt="${alt}"
-          auto-rotate
-          camera-controls
-          zoom-progress
-          shadow-intensity="1"
-          environment-image="neutral"
-          exposure="1"
-          interaction-prompt="none"
-          class="${className || ''}"
-          style="--poster-color: #1a1a24; width: 100%; height: 100%;"
-        ></model-viewer>
-      `;
-    }
-  }, [src, alt, className]);
-
-  return <div ref={containerRef} className="w-full h-full" style={style} />;
+  return (
+    <div className="w-full h-full" style={style}>
+      {React.createElement('model-viewer', {
+        src,
+        alt,
+        'auto-rotate': true,
+        'camera-controls': true,
+        'zoom-progress': true,
+        'shadow-intensity': '1',
+        'environment-image': 'neutral',
+        exposure: '1',
+        'interaction-prompt': 'none',
+        class: className || '',
+        style: { '--poster-color': '#1a1a24', width: '100%', height: '100%' },
+      })}
+    </div>
+  );
 };
 
 // ============================================================================
