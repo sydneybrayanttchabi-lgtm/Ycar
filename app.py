@@ -81,7 +81,7 @@ const MetricCard: React.FC<{
   label: string;
   value: string;
   accentColor?: string;
-}> = ({ label, value, accentColor = '#ff4b4b' }) => (
+}> = React.memo(({ label, value, accentColor = '#ff4b4b' }) => (
   <div 
     className="p-4 rounded-lg border-l-4 backdrop-blur-sm"
     style={{ 
@@ -93,12 +93,12 @@ const MetricCard: React.FC<{
     <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">{label}</p>
     <p className="text-white font-bold text-lg">{value}</p>
   </div>
-);
+));
 
 /**
  * Composant de reçu douanier style terminal
  */
-const CustomsReceipt: React.FC<{ calculation: CustomsCalculation }> = ({ calculation }) => {
+const CustomsReceipt: React.FC<{ calculation: CustomsCalculation }> = React.memo(({ calculation }) => {
   const receiptItems = [
     { label: 'Prix FOB (FCFA)', value: calculation.prixFOB_FCFA },
     { label: 'Fret Maritime (FCFA)', value: calculation.fret_FCFA },
@@ -159,41 +159,48 @@ const CustomsReceipt: React.FC<{ calculation: CustomsCalculation }> = ({ calcula
       </div>
     </div>
   );
-};
+});
 
 /**
- * Composant ModelViewer encapsulant l'élément custom
+ * Composant ModelViewer encapsulant l'élément custom.
+ * ⚡ Performance Optimization (Bolt):
+ * 1. React.memo prevents unnecessary re-renders when parent components re-render.
+ * 2. Reuses existing <model-viewer> DOM element instead of destroying/recreating via innerHTML on prop changes,
+ *    preventing expensive WebGL context recreation and 3D asset reloading.
  */
 const ModelViewerComponent: React.FC<{
   src: string;
   alt: string;
   className?: string;
   style?: React.CSSProperties;
-}> = ({ src, alt, className, style }) => {
+}> = React.memo(({ src, alt, className, style }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (containerRef.current) {
-      containerRef.current.innerHTML = `
-        <model-viewer
-          src="${src}"
-          alt="${alt}"
-          auto-rotate
-          camera-controls
-          zoom-progress
-          shadow-intensity="1"
-          environment-image="neutral"
-          exposure="1"
-          interaction-prompt="none"
-          class="${className || ''}"
-          style="--poster-color: #1a1a24; width: 100%; height: 100%;"
-        ></model-viewer>
-      `;
+      let modelViewer = containerRef.current.querySelector('model-viewer') as HTMLElement | null;
+      if (!modelViewer) {
+        modelViewer = document.createElement('model-viewer');
+        modelViewer.setAttribute('auto-rotate', '');
+        modelViewer.setAttribute('camera-controls', '');
+        modelViewer.setAttribute('zoom-progress', '');
+        modelViewer.setAttribute('shadow-intensity', '1');
+        modelViewer.setAttribute('environment-image', 'neutral');
+        modelViewer.setAttribute('exposure', '1');
+        modelViewer.setAttribute('interaction-prompt', 'none');
+        modelViewer.style.setProperty('--poster-color', '#1a1a24');
+        modelViewer.style.width = '100%';
+        modelViewer.style.height = '100%';
+        containerRef.current.appendChild(modelViewer);
+      }
+      modelViewer.setAttribute('src', src);
+      modelViewer.setAttribute('alt', alt);
+      modelViewer.className = className || '';
     }
   }, [src, alt, className]);
 
   return <div ref={containerRef} className="w-full h-full" style={style} />;
-};
+});
 
 // ============================================================================
 // COMPOSANT PRINCIPAL
