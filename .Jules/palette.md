@@ -1,0 +1,3 @@
+## 2026-10-30 - Accessible Tab Lists and Form Controls in TSX Single-File Components
+**Learning:** In single-file React TSX components featuring tab navigation and filters, screen readers require explicit `role="tablist"`, `role="tab"`, and `aria-selected` attributes for tabs, as well as `aria-label` or explicit `<label htmlFor="...">` associations for checkbox and select inputs to communicate control states and roles properly.
+**Action:** Always provide explicit ARIA roles (`tablist`, `tab`), `aria-selected` state, and labeled input associations when building custom tabbed interfaces and filter controls.
