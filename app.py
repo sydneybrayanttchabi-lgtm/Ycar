@@ -60,18 +60,25 @@ const FALLBACK_3D_MODEL = 'https://modelviewer.dev/shared-assets/models/ToyCar.g
 // COMPOSANTS UTILITAIRES
 // ============================================================================
 
+// Bolt optimization: Cache Intl.NumberFormat instances at module scope.
+// Creating Intl.NumberFormat instances on every render or function call is expensive
+// (~60x slower than reusing an existing instance). Reusing formatters drastically
+// reduces UI thread overhead during interactive slider updates and customs receipt renders.
+const fcfaFormatter = new Intl.NumberFormat('fr-FR');
+const usdFormatter = new Intl.NumberFormat('en-US');
+
 /**
  * Formattage des nombres en format monétaire FCFA
  */
 const formatFCFA = (value: number): string => {
-  return new Intl.NumberFormat('fr-FR').format(Math.round(value)) + ' FCFA';
+  return fcfaFormatter.format(Math.round(value)) + ' FCFA';
 };
 
 /**
  * Formattage des nombres en format monétaire USD
  */
 const formatUSD = (value: number): string => {
-  return '$' + new Intl.NumberFormat('en-US').format(Math.round(value));
+  return '$' + usdFormatter.format(Math.round(value));
 };
 
 /**
