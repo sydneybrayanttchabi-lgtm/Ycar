@@ -431,8 +431,10 @@ export default function App() {
 
           {/* Sélecteur de véhicule */}
           <div>
-            <p className="text-gray-400 text-xs uppercase tracking-wider mb-3">Véhicule</p>
+            <label htmlFor="vehicle-select" className="block text-gray-400 text-xs uppercase tracking-wider mb-3">Véhicule</label>
             <select
+              id="vehicle-select"
+              aria-label="Sélectionner un véhicule"
               value={selectedCar?.Marque_Modele || ''}
               onChange={(e) => {
                 const car = filteredCars.find(c => c.Marque_Modele === e.target.value);
@@ -560,18 +562,27 @@ export default function App() {
                       </ul>
                     </div>
 
-                    <a
-                      href={selectedCar.Lien_Vendeur}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block w-full py-3 px-4 rounded-lg text-center font-medium transition-all hover:opacity-90"
-                      style={{ 
-                        backgroundColor: '#ff4b4b',
-                        color: 'white'
-                      }}
-                    >
-                      🏪 Visiter la concession officielle
-                    </a>
+                    {selectedCar.Lien_Vendeur ? (
+                      <a
+                        href={selectedCar.Lien_Vendeur}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full py-3 px-4 rounded-lg text-center font-medium transition-all hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-red-500"
+                        style={{ backgroundColor: '#ff4b4b', color: 'white' }}
+                        aria-label="Visiter le site de la concession officielle (ouvre un nouvel onglet)"
+                      >
+                        🏪 Visiter la concession officielle ↗
+                      </a>
+                    ) : (
+                      <span
+                        aria-disabled="true"
+                        title="Lien du concessionnaire indisponible pour ce véhicule"
+                        className="block w-full py-3 px-4 rounded-lg text-center font-medium opacity-50 cursor-not-allowed select-none"
+                        style={{ backgroundColor: '#2a2a3a', color: '#888' }}
+                      >
+                        🏪 Concessionnaire non spécifié
+                      </span>
+                    )}
                   </div>
                 </div>
               )}
