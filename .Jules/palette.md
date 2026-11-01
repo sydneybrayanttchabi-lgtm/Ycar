@@ -1,0 +1,3 @@
+## 2026-08-20 - Accessible Form Controls and Range Sliders in Simulator Views
+**Learning:** Range sliders and simulator input groups in dark-themed utility panels frequently lack standard label associations (`htmlFor`/`id`), keyboard focus visible rings, and ARIA value indicators (`aria-valuemin`, `aria-valuemax`, `aria-valuenow`, `aria-valuetext`). Without `htmlFor`, clicking label text fails to shift focus to the slider or input, reducing touch target area and usability.
+**Action:** Always link labels to inputs explicitly via `htmlFor` and ensure sliders include semantic ARIA attributes as well as visible focus rings matching the theme palette (`focus:outline-none focus:ring-2 focus:ring-red-500`).

@@ -587,10 +587,11 @@ export default function App() {
 
                     {/* Taux de change */}
                     <div className="mb-6">
-                      <label className="block text-gray-400 text-sm mb-2">
+                      <label htmlFor="exchange-rate-input" className="block text-gray-400 text-sm mb-2">
                         Taux de change (USD → FCFA)
                       </label>
                       <input
+                        id="exchange-rate-input"
                         type="number"
                         value={exchangeRate}
                         onChange={(e) => setExchangeRate(parseFloat(e.target.value) || DEFAULT_EXCHANGE_RATE)}
@@ -604,14 +605,20 @@ export default function App() {
 
                     {/* Fret maritime */}
                     <div className="mb-6">
-                      <label className="block text-gray-400 text-sm mb-2">
+                      <label htmlFor="freight-usd-input" className="block text-gray-400 text-sm mb-2">
                         Fret maritime: {formatUSD(freightUSD)}
                       </label>
                       <input
+                        id="freight-usd-input"
                         type="range"
                         value={freightUSD}
+                        aria-label="Fret maritime"
+                        aria-valuemin={500}
+                        aria-valuemax={3000}
+                        aria-valuenow={freightUSD}
+                        aria-valuetext={formatUSD(freightUSD)}
                         onChange={(e) => setFreightUSD(parseFloat(e.target.value))}
-                        className="w-full h-2 rounded-lg appearance-none cursor-pointer"
+                        className="w-full h-2 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
                         style={{ backgroundColor: '#2a2a3a' }}
                         min="500"
                         max="3000"
@@ -625,10 +632,11 @@ export default function App() {
 
                     {/* Année du véhicule */}
                     <div className="mb-6">
-                      <label className="block text-gray-400 text-sm mb-2">
+                      <label htmlFor="vehicle-year-select" className="block text-gray-400 text-sm mb-2">
                         Année du véhicule
                       </label>
                       <select
+                        id="vehicle-year-select"
                         value={vehicleYear}
                         onChange={(e) => setVehicleYear(parseInt(e.target.value))}
                         className="w-full p-3 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
