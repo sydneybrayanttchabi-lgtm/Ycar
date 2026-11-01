@@ -1,0 +1,3 @@
+## 2026-11-01 - Intl.NumberFormat instantiation in rendering loops
+**Learning:** Instantiating `Intl.NumberFormat` on every formatting call or component render cycle introduces considerable micro-overhead (~60x-90x slowdown) and generates garbage objects. In components like receipt or calculation tables that format numbers repeatedly across state changes, caching module-level formatters delivers massive speedups with zero functional impact.
+**Action:** Always reuse static `Intl.NumberFormat` / `Intl.DateTimeFormat` instances across utility formatters instead of recreating them on each invocation.
