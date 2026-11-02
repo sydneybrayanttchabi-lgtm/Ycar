@@ -75,6 +75,19 @@ const formatUSD = (value: number): string => {
 };
 
 /**
+ * Validation securisee des URLs externes pour prevenir les failles XSS (javascript:, etc.)
+ */
+const getSafeUrl = (url: string | undefined): string => {
+  if (!url) return '#';
+  try {
+    const parsed = new URL(url.trim());
+    return ['http:', 'https:'].includes(parsed.protocol) ? parsed.href : '#';
+  } catch {
+    return '#';
+  }
+};
+
+/**
  * Composant de carte métrica stylisée
  */
 const MetricCard: React.FC<{
@@ -344,7 +357,8 @@ export default function App() {
     if (!car.Modele_3D_URL || car.Modele_3D_URL.trim() === '' || car.Modele_3D_URL === 'NaN') {
       return FALLBACK_3D_MODEL;
     }
-    return car.Modele_3D_URL;
+    const safeUrl = getSafeUrl(car.Modele_3D_URL);
+    return safeUrl === '#' ? FALLBACK_3D_MODEL : safeUrl;
   };
 
   // ============================================================================
@@ -561,7 +575,7 @@ export default function App() {
                     </div>
 
                     <a
-                      href={selectedCar.Lien_Vendeur}
+                      href={getSafeUrl(selectedCar.Lien_Vendeur)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="block w-full py-3 px-4 rounded-lg text-center font-medium transition-all hover:opacity-90"

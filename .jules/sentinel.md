@@ -1,0 +1,4 @@
+## 2026-03-06 - Unsanitized External URLs in CSV Data Causing Client-Side XSS
+**Vulnerability:** External URLs loaded from dataset (CSV) were rendered directly into anchor `href` attributes (`<a href={selectedCar.Lien_Vendeur}>`) and custom 3D viewer elements without protocol validation, allowing malicious schemes (`javascript:`, `data:`) to execute client-side script upon user click or element loading.
+**Learning:** CSV or remote data sources in client-only React applications should never be trusted as inherently safe. Standard React attributes like `href` do not automatically sanitize JavaScript pseudo-protocols.
+**Prevention:** Always validate external URL schemes using the browser `URL` constructor, strictly allowing only safe protocols (`http:`, `https:`) and falling back to a safe placeholder (`#` or static asset) when invalid.
