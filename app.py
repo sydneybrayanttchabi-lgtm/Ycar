@@ -173,23 +173,34 @@ const ModelViewerComponent: React.FC<{
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.innerHTML = `
-        <model-viewer
-          src="${src}"
-          alt="${alt}"
-          auto-rotate
-          camera-controls
-          zoom-progress
-          shadow-intensity="1"
-          environment-image="neutral"
-          exposure="1"
-          interaction-prompt="none"
-          class="${className || ''}"
-          style="--poster-color: #1a1a24; width: 100%; height: 100%;"
-        ></model-viewer>
-      `;
-    }
+    const container = containerRef.current;
+    if (!container) return;
+
+    // Security: avoid innerHTML template injection (XSS) and validate src URL scheme
+    container.textContent = '';
+    const isSafeUrl = /^(https?:|\/|\.\/)/i.test(src.trim());
+    const safeSrc = isSafeUrl ? src : FALLBACK_3D_MODEL;
+
+    const viewer = document.createElement('model-viewer');
+    viewer.setAttribute('src', safeSrc);
+    viewer.setAttribute('alt', alt);
+    viewer.setAttribute('auto-rotate', '');
+    viewer.setAttribute('camera-controls', '');
+    viewer.setAttribute('zoom-progress', '');
+    viewer.setAttribute('shadow-intensity', '1');
+    viewer.setAttribute('environment-image', 'neutral');
+    viewer.setAttribute('exposure', '1');
+    viewer.setAttribute('interaction-prompt', 'none');
+    if (className) viewer.className = className;
+    viewer.style.setProperty('--poster-color', '#1a1a24');
+    viewer.style.width = '100%';
+    viewer.style.height = '100%';
+
+    container.appendChild(viewer);
+
+    return () => {
+      container.textContent = '';
+    };
   }, [src, alt, className]);
 
   return <div ref={containerRef} className="w-full h-full" style={style} />;
