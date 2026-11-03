@@ -41,6 +41,9 @@ const DEFAULT_EXCHANGE_RATE = 605;
 const DEFAULT_FREIGHT_USD = 1200;
 const MIN_YEAR = 2006;
 const MAX_YEAR = 2026;
+// Performance optimization: precompute static list of available years once outside of render loop
+// to avoid allocating and populating a new array on every render / state update
+const AVAILABLE_YEARS = Array.from({ length: MAX_YEAR - MIN_YEAR + 1 }, (_, i) => MAX_YEAR - i);
 const AGE_THRESHOLD = 2016;
 const AGE_PENALTY = 150000;
 const GUCE_FEE = 35000;
@@ -634,7 +637,7 @@ export default function App() {
                         className="w-full p-3 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
                         style={{ backgroundColor: '#0e1117', border: '1px solid #2a2a3a' }}
                       >
-                        {Array.from({ length: MAX_YEAR - MIN_YEAR + 1 }, (_, i) => MAX_YEAR - i).map(year => (
+                        {AVAILABLE_YEARS.map(year => (
                           <option key={year} value={year}>{year}</option>
                         ))}
                       </select>
