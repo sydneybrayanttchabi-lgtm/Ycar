@@ -164,35 +164,50 @@ const CustomsReceipt: React.FC<{ calculation: CustomsCalculation }> = ({ calcula
 /**
  * Composant ModelViewer encapsulant l'élément custom
  */
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'model-viewer': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
+        src?: string;
+        alt?: string;
+        'auto-rotate'?: boolean | string;
+        'camera-controls'?: boolean | string;
+        'zoom-progress'?: boolean | string;
+        'shadow-intensity'?: string | number;
+        'environment-image'?: string;
+        exposure?: string | number;
+        'interaction-prompt'?: string;
+      };
+    }
+  }
+}
+
+/**
+ * Composant ModelViewer sécurisé: rendu déclaratif sans innerHTML (prévention DOM XSS)
+ */
 const ModelViewerComponent: React.FC<{
   src: string;
   alt: string;
   className?: string;
   style?: React.CSSProperties;
 }> = ({ src, alt, className, style }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.innerHTML = `
-        <model-viewer
-          src="${src}"
-          alt="${alt}"
-          auto-rotate
-          camera-controls
-          zoom-progress
-          shadow-intensity="1"
-          environment-image="neutral"
-          exposure="1"
-          interaction-prompt="none"
-          class="${className || ''}"
-          style="--poster-color: #1a1a24; width: 100%; height: 100%;"
-        ></model-viewer>
-      `;
-    }
-  }, [src, alt, className]);
-
-  return <div ref={containerRef} className="w-full h-full" style={style} />;
+  return (
+    <div className="w-full h-full" style={style}>
+      <model-viewer
+        src={src}
+        alt={alt}
+        auto-rotate=""
+        camera-controls=""
+        zoom-progress=""
+        shadow-intensity="1"
+        environment-image="neutral"
+        exposure="1"
+        interaction-prompt="none"
+        className={className || ''}
+        style={{ '--poster-color': '#1a1a24', width: '100%', height: '100%' } as React.CSSProperties}
+      />
+    </div>
+  );
 };
 
 // ============================================================================
