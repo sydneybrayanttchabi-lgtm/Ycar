@@ -1,0 +1,4 @@
+## 2025-05-18 - Client-Side CSV URL XSS Prevention
+**Vulnerability:** Untrusted external URLs loaded from vehicle CSV datasets (`b.v.csv`) were rendered directly into external anchor `href` attributes without protocol sanitization, enabling Cross-Site Scripting (XSS) via `javascript:` or `data:` pseudo-protocols when users clicked the link.
+**Learning:** React JSX does not automatically sanitize `href` values on `<a>` tags against `javascript:` URLs. While modern React logs warnings, links pointing to `javascript:...` can execute arbitrary script in the application's context if malicious or corrupted CSV data is ingested.
+**Prevention:** Always validate and sanitize external URLs using standard URL parsing and enforce a strict protocol whitelist (`http:`, `https:`) before rendering in navigation or anchor links.
