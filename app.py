@@ -60,18 +60,24 @@ const FALLBACK_3D_MODEL = 'https://modelviewer.dev/shared-assets/models/ToyCar.g
 // COMPOSANTS UTILITAIRES
 // ============================================================================
 
+// Performance optimization: Instantiate Intl.NumberFormat once at module scope
+// instead of creating a new instance on every format call during re-renders.
+// Intl formatting constructor initialization is computationally expensive (~60x overhead).
+const FCFA_FORMATTER = new Intl.NumberFormat('fr-FR');
+const USD_FORMATTER = new Intl.NumberFormat('en-US');
+
 /**
  * Formattage des nombres en format monétaire FCFA
  */
 const formatFCFA = (value: number): string => {
-  return new Intl.NumberFormat('fr-FR').format(Math.round(value)) + ' FCFA';
+  return FCFA_FORMATTER.format(Math.round(value)) + ' FCFA';
 };
 
 /**
  * Formattage des nombres en format monétaire USD
  */
 const formatUSD = (value: number): string => {
-  return '$' + new Intl.NumberFormat('en-US').format(Math.round(value));
+  return '$' + USD_FORMATTER.format(Math.round(value));
 };
 
 /**
