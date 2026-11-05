@@ -61,6 +61,23 @@ const FALLBACK_3D_MODEL = 'https://modelviewer.dev/shared-assets/models/ToyCar.g
 // ============================================================================
 
 /**
+ * Validation de sécurité pour les liens externes (prévention des attaques XSS via javascript: ou data:)
+ */
+const sanitizeExternalUrl = (url?: string): string | null => {
+  if (!url || typeof url !== 'string') return null;
+  const trimmed = url.trim();
+  try {
+    const parsed = new URL(trimmed);
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+      return trimmed;
+    }
+  } catch {
+    return null;
+  }
+  return null;
+};
+
+/**
  * Formattage des nombres en format monétaire FCFA
  */
 const formatFCFA = (value: number): string => {
@@ -560,18 +577,20 @@ export default function App() {
                       </ul>
                     </div>
 
-                    <a
-                      href={selectedCar.Lien_Vendeur}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block w-full py-3 px-4 rounded-lg text-center font-medium transition-all hover:opacity-90"
-                      style={{ 
-                        backgroundColor: '#ff4b4b',
-                        color: 'white'
-                      }}
-                    >
-                      🏪 Visiter la concession officielle
-                    </a>
+                    {sanitizeExternalUrl(selectedCar.Lien_Vendeur) && (
+                      <a
+                        href={sanitizeExternalUrl(selectedCar.Lien_Vendeur)!}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full py-3 px-4 rounded-lg text-center font-medium transition-all hover:opacity-90"
+                        style={{
+                          backgroundColor: '#ff4b4b',
+                          color: 'white'
+                        }}
+                      >
+                        🏪 Visiter la concession officielle
+                      </a>
+                    )}
                   </div>
                 </div>
               )}
