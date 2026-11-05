@@ -58,6 +58,15 @@ const FALLBACK_3D_MODEL = 'https://modelviewer.dev/shared-assets/models/ToyCar.g
 
 // ============================================================================
 // COMPOSANTS UTILITAIRES
+/**
+ * Valide et assainit une URL pour éviter les attaques XSS (javascript:, etc.)
+ */
+const sanitizeUrl = (url?: string): string => {
+  if (!url) return '#';
+  const trimmed = url.trim();
+  return /^https?:\/\//i.test(trimmed) ? trimmed : '#';
+};
+
 // ============================================================================
 
 /**
@@ -174,21 +183,20 @@ const ModelViewerComponent: React.FC<{
 
   useEffect(() => {
     if (containerRef.current) {
-      containerRef.current.innerHTML = `
-        <model-viewer
-          src="${src}"
-          alt="${alt}"
-          auto-rotate
-          camera-controls
-          zoom-progress
-          shadow-intensity="1"
-          environment-image="neutral"
-          exposure="1"
-          interaction-prompt="none"
-          class="${className || ''}"
-          style="--poster-color: #1a1a24; width: 100%; height: 100%;"
-        ></model-viewer>
-      `;
+      containerRef.current.textContent = '';
+      const mv = document.createElement('model-viewer');
+      mv.setAttribute('src', src);
+      mv.setAttribute('alt', alt);
+      mv.setAttribute('auto-rotate', '');
+      mv.setAttribute('camera-controls', '');
+      mv.setAttribute('zoom-progress', '');
+      mv.setAttribute('shadow-intensity', '1');
+      mv.setAttribute('environment-image', 'neutral');
+      mv.setAttribute('exposure', '1');
+      mv.setAttribute('interaction-prompt', 'none');
+      if (className) mv.className = className;
+      mv.setAttribute('style', '--poster-color: #1a1a24; width: 100%; height: 100%;');
+      containerRef.current.appendChild(mv);
     }
   }, [src, alt, className]);
 
@@ -561,7 +569,7 @@ export default function App() {
                     </div>
 
                     <a
-                      href={selectedCar.Lien_Vendeur}
+                      href={sanitizeUrl(selectedCar.Lien_Vendeur)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="block w-full py-3 px-4 rounded-lg text-center font-medium transition-all hover:opacity-90"
