@@ -431,8 +431,11 @@ export default function App() {
 
           {/* Sélecteur de véhicule */}
           <div>
-            <p className="text-gray-400 text-xs uppercase tracking-wider mb-3">Véhicule</p>
+            <label htmlFor="vehicle-select" className="block text-gray-400 text-xs uppercase tracking-wider mb-3">
+              Véhicule
+            </label>
             <select
+              id="vehicle-select"
               value={selectedCar?.Marque_Modele || ''}
               onChange={(e) => {
                 const car = filteredCars.find(c => c.Marque_Modele === e.target.value);
@@ -587,10 +590,11 @@ export default function App() {
 
                     {/* Taux de change */}
                     <div className="mb-6">
-                      <label className="block text-gray-400 text-sm mb-2">
+                      <label htmlFor="exchange-rate" className="block text-gray-400 text-sm mb-2">
                         Taux de change (USD → FCFA)
                       </label>
                       <input
+                        id="exchange-rate"
                         type="number"
                         value={exchangeRate}
                         onChange={(e) => setExchangeRate(parseFloat(e.target.value) || DEFAULT_EXCHANGE_RATE)}
@@ -604,13 +608,18 @@ export default function App() {
 
                     {/* Fret maritime */}
                     <div className="mb-6">
-                      <label className="block text-gray-400 text-sm mb-2">
+                      <label htmlFor="freight-usd" className="block text-gray-400 text-sm mb-2">
                         Fret maritime: {formatUSD(freightUSD)}
                       </label>
                       <input
+                        id="freight-usd"
                         type="range"
                         value={freightUSD}
                         onChange={(e) => setFreightUSD(parseFloat(e.target.value))}
+                        aria-valuemin={500}
+                        aria-valuemax={3000}
+                        aria-valuenow={freightUSD}
+                        aria-valuetext={formatUSD(freightUSD)}
                         className="w-full h-2 rounded-lg appearance-none cursor-pointer"
                         style={{ backgroundColor: '#2a2a3a' }}
                         min="500"
@@ -625,10 +634,11 @@ export default function App() {
 
                     {/* Année du véhicule */}
                     <div className="mb-6">
-                      <label className="block text-gray-400 text-sm mb-2">
+                      <label htmlFor="vehicle-year" className="block text-gray-400 text-sm mb-2">
                         Année du véhicule
                       </label>
                       <select
+                        id="vehicle-year"
                         value={vehicleYear}
                         onChange={(e) => setVehicleYear(parseInt(e.target.value))}
                         className="w-full p-3 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 transition-all"
