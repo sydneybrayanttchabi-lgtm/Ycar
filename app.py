@@ -478,10 +478,22 @@ export default function App() {
 
               {/* Onglets */}
               <div className="mb-6">
-                <div className="flex border-b" style={{ borderColor: '#2a2a3a' }}>
+                <div role="tablist" aria-label="Sections du véhicule" className="flex border-b" style={{ borderColor: '#2a2a3a' }}>
                   <button
+                    id="tab-3d"
+                    role="tab"
+                    aria-selected={activeTab === '3d'}
+                    aria-controls="panel-3d"
+                    tabIndex={activeTab === '3d' ? 0 : -1}
                     onClick={() => setActiveTab('3d')}
-                    className={`px-6 py-3 font-medium transition-colors ${
+                    onKeyDown={(e) => {
+                      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        setActiveTab('customs');
+                        document.getElementById('tab-customs')?.focus();
+                      }
+                    }}
+                    className={`px-6 py-3 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded-t-lg ${
                       activeTab === '3d' 
                         ? 'text-white border-b-2' 
                         : 'text-gray-400 hover:text-white'
@@ -491,8 +503,20 @@ export default function App() {
                     🏎️ Vue 360° & Fiche Technique
                   </button>
                   <button
+                    id="tab-customs"
+                    role="tab"
+                    aria-selected={activeTab === 'customs'}
+                    aria-controls="panel-customs"
+                    tabIndex={activeTab === 'customs' ? 0 : -1}
                     onClick={() => setActiveTab('customs')}
-                    className={`px-6 py-3 font-medium transition-colors ${
+                    onKeyDown={(e) => {
+                      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+                        e.preventDefault();
+                        setActiveTab('3d');
+                        document.getElementById('tab-3d')?.focus();
+                      }
+                    }}
+                    className={`px-6 py-3 font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded-t-lg ${
                       activeTab === 'customs' 
                         ? 'text-white border-b-2' 
                         : 'text-gray-400 hover:text-white'
@@ -506,7 +530,7 @@ export default function App() {
 
               {/* Contenu des onglets */}
               {activeTab === '3d' && (
-                <div className="grid grid-cols-2 gap-6">
+                <div id="panel-3d" role="tabpanel" aria-labelledby="tab-3d" tabIndex={0} className="grid grid-cols-2 gap-6 focus:outline-none focus-visible:ring-1 focus-visible:ring-red-500 rounded-lg">
                   {/* Visualisation 3D */}
                   <div 
                     className="rounded-lg overflow-hidden"
@@ -577,7 +601,7 @@ export default function App() {
               )}
 
               {activeTab === 'customs' && (
-                <div className="grid grid-cols-2 gap-6">
+                <div id="panel-customs" role="tabpanel" aria-labelledby="tab-customs" tabIndex={0} className="grid grid-cols-2 gap-6 focus:outline-none focus-visible:ring-1 focus-visible:ring-red-500 rounded-lg">
                   {/* Paramètres du simulateur */}
                   <div 
                     className="rounded-lg p-6"
