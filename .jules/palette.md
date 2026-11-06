@@ -1,0 +1,4 @@
+## 2026-11-06 - Accessible Tab Navigation Pattern for Standalone React Views
+
+**Learning:** In single-file React components where external tab libraries are not permitted, tabs often render as unannotated `<button>` rows lacking WAI-ARIA roles (`tablist`, `tab`, `tabpanel`), proper focus indicators, and arrow key switching. Screen reader users cannot discern tab state, and keyboard-only users cannot navigate using standard WAI-ARIA tab navigation conventions (Left/Right arrows, tabIndex roving focus).
+**Action:** When working on tabs in standalone React components without tab libraries, equip the container with `role="tablist"` + descriptive `aria-label`, buttons with `role="tab"`, `aria-selected`, `aria-controls`, `tabIndex` roving focus (`0` for active, `-1` for inactive), keyboard navigation (`ArrowLeft`/`ArrowRight`), and explicit `focus-visible` ring styling. Match each panel with `role="tabpanel"`, `aria-labelledby`, and `tabIndex={0}`.
