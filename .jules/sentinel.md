@@ -1,0 +1,4 @@
+## 2026-11-07 - ModelViewer innerHTML DOM Injection
+**Vulnerability:** `ModelViewerComponent` interpolated unescaped properties (`src`, `alt`, `className`) directly into an HTML string assigned via `containerRef.current.innerHTML`. If car model URLs or descriptions originated from untrusted CSV data or external APIs, an attacker could inject arbitrary HTML/XSS markup or script execution payloads.
+**Learning:** Web components and custom elements (`<model-viewer>`) wrapped in React components are often dynamically mounted via `innerHTML` strings instead of safe React JSX or DOM APIs.
+**Prevention:** Avoid `innerHTML` template string interpolation for custom elements. Create custom elements via `document.createElement(...)` and configure properties safely with `setAttribute(...)` and properties.
