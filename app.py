@@ -478,10 +478,14 @@ export default function App() {
 
               {/* Onglets */}
               <div className="mb-6">
-                <div className="flex border-b" style={{ borderColor: '#2a2a3a' }}>
+                <div role="tablist" aria-label="Modes de consultation" className="flex border-b" style={{ borderColor: '#2a2a3a' }}>
                   <button
+                    role="tab"
+                    id="tab-3d"
+                    aria-selected={activeTab === '3d'}
+                    aria-controls="panel-3d"
                     onClick={() => setActiveTab('3d')}
-                    className={`px-6 py-3 font-medium transition-colors ${
+                    className={`px-6 py-3 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded-t-md ${
                       activeTab === '3d' 
                         ? 'text-white border-b-2' 
                         : 'text-gray-400 hover:text-white'
@@ -491,8 +495,12 @@ export default function App() {
                     🏎️ Vue 360° & Fiche Technique
                   </button>
                   <button
+                    role="tab"
+                    id="tab-customs"
+                    aria-selected={activeTab === 'customs'}
+                    aria-controls="panel-customs"
                     onClick={() => setActiveTab('customs')}
-                    className={`px-6 py-3 font-medium transition-colors ${
+                    className={`px-6 py-3 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded-t-md ${
                       activeTab === 'customs' 
                         ? 'text-white border-b-2' 
                         : 'text-gray-400 hover:text-white'
@@ -506,7 +514,7 @@ export default function App() {
 
               {/* Contenu des onglets */}
               {activeTab === '3d' && (
-                <div className="grid grid-cols-2 gap-6">
+                <div id="panel-3d" role="tabpanel" aria-labelledby="tab-3d" tabIndex={0} className="grid grid-cols-2 gap-6 focus-visible:outline-none">
                   {/* Visualisation 3D */}
                   <div 
                     className="rounded-lg overflow-hidden"
@@ -577,7 +585,7 @@ export default function App() {
               )}
 
               {activeTab === 'customs' && (
-                <div className="grid grid-cols-2 gap-6">
+                <div id="panel-customs" role="tabpanel" aria-labelledby="tab-customs" tabIndex={0} className="grid grid-cols-2 gap-6 focus-visible:outline-none">
                   {/* Paramètres du simulateur */}
                   <div 
                     className="rounded-lg p-6"
