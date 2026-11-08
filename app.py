@@ -74,6 +74,17 @@ const formatUSD = (value: number): string => {
   return '$' + new Intl.NumberFormat('en-US').format(Math.round(value));
 };
 
+/** Validation sécurisée des URL externes (http/https uniquement) */
+const isValidHttpUrl = (urlStr: string): boolean => {
+  if (!urlStr || typeof urlStr !== 'string') return false;
+  try {
+    const parsed = new URL(urlStr.trim());
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+  } catch {
+    return false;
+  }
+};
+
 /**
  * Composant de carte métrica stylisée
  */
@@ -341,10 +352,8 @@ export default function App() {
   };
 
   const get3DModelUrl = (car: CarData): string => {
-    if (!car.Modele_3D_URL || car.Modele_3D_URL.trim() === '' || car.Modele_3D_URL === 'NaN') {
-      return FALLBACK_3D_MODEL;
-    }
-    return car.Modele_3D_URL;
+    const url = car.Modele_3D_URL ? car.Modele_3D_URL.trim() : '';
+    return (!url || url === 'NaN' || !isValidHttpUrl(url)) ? FALLBACK_3D_MODEL : url;
   };
 
   // ============================================================================
@@ -560,18 +569,24 @@ export default function App() {
                       </ul>
                     </div>
 
-                    <a
-                      href={selectedCar.Lien_Vendeur}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block w-full py-3 px-4 rounded-lg text-center font-medium transition-all hover:opacity-90"
-                      style={{ 
-                        backgroundColor: '#ff4b4b',
-                        color: 'white'
-                      }}
-                    >
-                      🏪 Visiter la concession officielle
-                    </a>
+                    {isValidHttpUrl(selectedCar.Lien_Vendeur) ? (
+                      <a
+                        href={selectedCar.Lien_Vendeur.trim()}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full py-3 px-4 rounded-lg text-center font-medium transition-all hover:opacity-90"
+                        style={{ backgroundColor: '#ff4b4b', color: 'white' }}
+                      >
+                        🏪 Visiter la concession officielle
+                      </a>
+                    ) : (
+                      <span
+                        className="block w-full py-3 px-4 rounded-lg text-center font-medium opacity-50 cursor-not-allowed"
+                        style={{ backgroundColor: '#2a2a3a', color: '#9ca3af' }}
+                      >
+                        🏪 Concessionnaire indisponible
+                      </span>
+                    )}
                   </div>
                 </div>
               )}
