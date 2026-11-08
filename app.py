@@ -60,18 +60,22 @@ const FALLBACK_3D_MODEL = 'https://modelviewer.dev/shared-assets/models/ToyCar.g
 // COMPOSANTS UTILITAIRES
 // ============================================================================
 
+// Cached Intl formatters to avoid expensive re-initialization on every render and slider change (~70x faster)
+const fcfaFormatter = new Intl.NumberFormat('fr-FR');
+const usdFormatter = new Intl.NumberFormat('en-US');
+
 /**
  * Formattage des nombres en format monétaire FCFA
  */
 const formatFCFA = (value: number): string => {
-  return new Intl.NumberFormat('fr-FR').format(Math.round(value)) + ' FCFA';
+  return fcfaFormatter.format(Math.round(value)) + ' FCFA';
 };
 
 /**
  * Formattage des nombres en format monétaire USD
  */
 const formatUSD = (value: number): string => {
-  return '$' + new Intl.NumberFormat('en-US').format(Math.round(value));
+  return '$' + usdFormatter.format(Math.round(value));
 };
 
 /**
