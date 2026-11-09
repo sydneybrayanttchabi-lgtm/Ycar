@@ -1,0 +1,4 @@
+## 2026-11-09 - DOM XSS in Custom Web Component Mounting via innerHTML
+**Vulnerability:** `ModelViewerComponent` in `app.py` mounted Google's `<model-viewer>` custom element by injecting raw strings (`src`, `alt`, and `className`) into `containerRef.current.innerHTML` using unescaped template string interpolation. If model URLs, vehicle names, or classes contained quotes or HTML tags, it could lead to attribute breakout and arbitrary script execution (DOM XSS).
+**Learning:** React wrapper components around Web Components or custom elements often reach for `container.innerHTML = \`<custom-element ...>\`` due to custom element attribute reflection quirks, bypassing React's built-in JSX sanitization.
+**Prevention:** Avoid `innerHTML` template strings. Mount custom elements by using standard DOM API methods (`document.createElement`, `setAttribute`, and `replaceChildren`) and validate that URI schemes are restricted to safe protocols (`http:`, `https:`).
