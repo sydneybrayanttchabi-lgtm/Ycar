@@ -471,7 +471,7 @@ export default function App() {
                 />
                 <MetricCard
                   label="Concessionnaire"
-                  value={selectedCar.Vendeur_Officiel}
+                  value={selectedCar.Vendeur_Officiel || 'Non renseigné'}
                   accentColor="#4bff8b"
                 />
               </div>
@@ -560,18 +560,32 @@ export default function App() {
                       </ul>
                     </div>
 
-                    <a
-                      href={selectedCar.Lien_Vendeur}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block w-full py-3 px-4 rounded-lg text-center font-medium transition-all hover:opacity-90"
-                      style={{ 
-                        backgroundColor: '#ff4b4b',
-                        color: 'white'
-                      }}
-                    >
-                      🏪 Visiter la concession officielle
-                    </a>
+                    {selectedCar.Lien_Vendeur ? (
+                      <a
+                        href={selectedCar.Lien_Vendeur}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`Visiter la concession officielle (${selectedCar.Marque_Modele}) - ouvre un nouvel onglet`}
+                        className="block w-full py-3 px-4 rounded-lg text-center font-medium transition-all hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
+                        style={{ backgroundColor: '#ff4b4b', color: 'white' }}
+                      >
+                        🏪 Visiter la concession officielle <span aria-hidden="true">↗</span>
+                      </a>
+                    ) : (
+                      <div className="space-y-1.5">
+                        <button
+                          disabled
+                          aria-disabled="true"
+                          className="block w-full py-3 px-4 rounded-lg text-center font-medium opacity-50 cursor-not-allowed border border-gray-700 text-gray-400"
+                          style={{ backgroundColor: '#13151f' }}
+                        >
+                          🏪 Concession officielle indisponible
+                        </button>
+                        <p className="text-gray-500 text-xs text-center">
+                          Aucun lien concessionnaire officiel renseigné pour ce modèle.
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
