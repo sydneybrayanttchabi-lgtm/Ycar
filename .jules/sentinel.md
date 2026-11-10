@@ -1,0 +1,4 @@
+## 2025-05-18 - Client-side URI Scheme XSS in External Links from CSV Data
+**Vulnerability:** External URLs sourced from unvalidated data (`b.v.csv`) were passed directly into `<a href={...}>` attributes, allowing potential `javascript:` or `data:` protocol execution if malicious or spoofed data was loaded.
+**Learning:** React does not automatically sanitize `href` attributes against `javascript:` or other dangerous pseudo-protocol URI schemes. Even when data is loaded from structured CSV files, any external link attributes must be validated against allowed protocols (`http:` and `https:`).
+**Prevention:** Always validate external URL inputs with the native `URL` constructor and verify that `protocol === 'http:' || protocol === 'https:'` before rendering them in anchor tags. Provide safe fallback UI when links are absent or invalid.
