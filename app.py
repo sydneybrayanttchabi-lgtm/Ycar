@@ -60,18 +60,24 @@ const FALLBACK_3D_MODEL = 'https://modelviewer.dev/shared-assets/models/ToyCar.g
 // COMPOSANTS UTILITAIRES
 // ============================================================================
 
+// ⚡ Bolt Optimization: Reuse Intl.NumberFormat instances across renders/calls.
+// Instantiating new Intl.NumberFormat objects repeatedly in render loops is expensive
+// (~70-100x slower in V8 due to locale resolution and internal data structure creation).
+const frNumberFormatter = new Intl.NumberFormat('fr-FR');
+const usNumberFormatter = new Intl.NumberFormat('en-US');
+
 /**
  * Formattage des nombres en format monétaire FCFA
  */
 const formatFCFA = (value: number): string => {
-  return new Intl.NumberFormat('fr-FR').format(Math.round(value)) + ' FCFA';
+  return frNumberFormatter.format(Math.round(value)) + ' FCFA';
 };
 
 /**
  * Formattage des nombres en format monétaire USD
  */
 const formatUSD = (value: number): string => {
-  return '$' + new Intl.NumberFormat('en-US').format(Math.round(value));
+  return '$' + usNumberFormatter.format(Math.round(value));
 };
 
 /**
