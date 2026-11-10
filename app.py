@@ -75,6 +75,25 @@ const formatUSD = (value: number): string => {
 };
 
 /**
+ * Security: Validates and sanitizes external vendor URLs to prevent
+ * javascript: / data: pseudo-protocol Cross-Site Scripting (XSS).
+ */
+const getSafeUrl = (url: string | undefined): string | null => {
+  if (!url || typeof url !== 'string') return null;
+  const trimmed = url.trim();
+  if (!trimmed) return null;
+  try {
+    const parsed = new URL(trimmed);
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+      return parsed.href;
+    }
+  } catch {
+    return null;
+  }
+  return null;
+};
+
+/**
  * Composant de carte métrica stylisée
  */
 const MetricCard: React.FC<{
@@ -560,18 +579,27 @@ export default function App() {
                       </ul>
                     </div>
 
-                    <a
-                      href={selectedCar.Lien_Vendeur}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block w-full py-3 px-4 rounded-lg text-center font-medium transition-all hover:opacity-90"
-                      style={{ 
-                        backgroundColor: '#ff4b4b',
-                        color: 'white'
-                      }}
-                    >
-                      🏪 Visiter la concession officielle
-                    </a>
+                    {(() => {
+                      const safeVendorUrl = getSafeUrl(selectedCar.Lien_Vendeur);
+                      return safeVendorUrl ? (
+                        <a
+                          href={safeVendorUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block w-full py-3 px-4 rounded-lg text-center font-medium transition-all hover:opacity-90"
+                          style={{ backgroundColor: '#ff4b4b', color: 'white' }}
+                        >
+                          🏪 Visiter la concession officielle
+                        </a>
+                      ) : (
+                        <div
+                          className="block w-full py-3 px-4 rounded-lg text-center font-medium text-gray-500 cursor-not-allowed"
+                          style={{ backgroundColor: '#2a2a3a' }}
+                        >
+                          🏪 Concession officielle non renseignée
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
               )}
