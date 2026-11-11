@@ -1,0 +1,4 @@
+## 2026-08-20 - URL Scheme Validation on External Dealer Links
+**Vulnerability:** External dealer links (`Lien_Vendeur`) loaded from CSV data were passed directly into `<a href={...}>` without protocol scheme validation. An attacker controlling or poisoning the CSV input could provide `javascript:` or `data:` URLs resulting in client-side Cross-Site Scripting (XSS) when users click the dealer link.
+**Learning:** In React applications parsing external tabular or CSV records, dynamic URLs bound to `href` attributes can execute arbitrary scripts if they use unsafe URI schemes like `javascript:`.
+**Prevention:** Always validate external URL strings using the `URL` constructor to verify that `parsed.protocol` strictly matches `http:` or `https:` before rendering them as clickable links, and provide a fallback disabled state when the URL is invalid.

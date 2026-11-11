@@ -61,6 +61,19 @@ const FALLBACK_3D_MODEL = 'https://modelviewer.dev/shared-assets/models/ToyCar.g
 // ============================================================================
 
 /**
+ * Validation securisee d'URL (protection contre injection XSS javascript:/data:)
+ */
+const isValidHttpUrl = (url: string): boolean => {
+  if (!url || typeof url !== 'string') return false;
+  try {
+    const parsed = new URL(url.trim());
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+  } catch {
+    return false;
+  }
+};
+
+/**
  * Formattage des nombres en format monétaire FCFA
  */
 const formatFCFA = (value: number): string => {
@@ -560,18 +573,27 @@ export default function App() {
                       </ul>
                     </div>
 
-                    <a
-                      href={selectedCar.Lien_Vendeur}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block w-full py-3 px-4 rounded-lg text-center font-medium transition-all hover:opacity-90"
-                      style={{ 
-                        backgroundColor: '#ff4b4b',
-                        color: 'white'
-                      }}
-                    >
-                      🏪 Visiter la concession officielle
-                    </a>
+                    {isValidHttpUrl(selectedCar.Lien_Vendeur) ? (
+                      <a
+                        href={selectedCar.Lien_Vendeur.trim()}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full py-3 px-4 rounded-lg text-center font-medium transition-all hover:opacity-90"
+                        style={{
+                          backgroundColor: '#ff4b4b',
+                          color: 'white'
+                        }}
+                      >
+                        🏪 Visiter la concession officielle
+                      </a>
+                    ) : (
+                      <div
+                        className="block w-full py-3 px-4 rounded-lg text-center font-medium text-gray-500 cursor-not-allowed"
+                        style={{ backgroundColor: '#2a2a3a' }}
+                      >
+                        🏪 Lien concession indisponible
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
