@@ -1,0 +1,4 @@
+## 2026-11-11 - DOM XSS in ModelViewerComponent via innerHTML Template Literals
+**Vulnerability:** `ModelViewerComponent` rendered custom `<model-viewer>` elements using direct string template interpolation into `containerRef.current.innerHTML` with untrusted properties (`src`, `alt`, `className`) parsed from vehicle data, enabling DOM-based Cross-Site Scripting (XSS).
+**Learning:** Wrapping Web Components in React apps by interpolating attributes into `innerHTML` bypasses React's virtual DOM sanitization. If any attribute contains unescaped quotes or malicious payloads, an attacker can break out of attributes and execute arbitrary script in the client context.
+**Prevention:** Avoid `innerHTML` template string interpolation when wrapping web components or custom elements. Use standard DOM APIs (`document.createElement` and `setAttribute`) or imperative property setters, clearing previous children securely via `replaceChildren()`.
